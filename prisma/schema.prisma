@@ -69,12 +69,12 @@ model Manager {
 
 model Employee {
   id           Int        @id @default(autoincrement())
-  name         String
-  address      String
-  birth_date   DateTime
-  gender       Gender
+  name         String?
+  address      String?
+  birth_date   DateTime?
+  gender       Gender?
   job_status   JobStatus
-  phone        String
+  phone        String?
   userId       Int        @unique
   companyId    Int
   departmentId Int
