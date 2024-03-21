@@ -2,7 +2,7 @@ import { prisma } from "@/config/db";
 import jwt from "jsonwebtoken";
 
 export default async function handle(req, res) {
-  if (req.method !== "PUT") {
+  if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
@@ -22,7 +22,7 @@ export default async function handle(req, res) {
     return res.status(403).json({ message: "You are not authorized" });
   }
 
-  const { id, departmentId } = req.body;
+  const { id, job_status, departmentId } = req.body;
 
   const manager = await prisma.manager.findUnique({
     where: {
@@ -42,6 +42,16 @@ export default async function handle(req, res) {
       .json({ message: "You are not authorized to update this employee" });
   }
 
+  const department = await prisma.department.findUnique({
+    where: {
+      id: departmentId,
+    },
+  });
+
+  if (!department || department.companyId !== manager.companyId) {
+    return res.status(400).json({ message: "Invalid department" });
+  }
+
   let updatedEmployee;
   try {
     updatedEmployee = await prisma.employee.update({
@@ -49,6 +59,7 @@ export default async function handle(req, res) {
         id,
       },
       data: {
+        job_status,
         departmentId,
       },
     });

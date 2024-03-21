@@ -28,12 +28,7 @@ export default async function handle(req, res) {
       userId: decoded.id,
     },
     include: {
-      Company: {
-        select: {
-          id: true,
-          Department: true,
-        },
-      },
+      Company: true,
     },
   });
 
@@ -41,19 +36,9 @@ export default async function handle(req, res) {
     return res.status(404).json({ message: "Manager not found" });
   }
 
-  const {
-    username,
-    email,
-    password,
-    job_status,
-  } = req.body;
+  const { username, email, password, job_status, departmentId } = req.body;
 
-  if (
-    !username ||
-    !email ||
-    !password ||
-    !job_status
-  ) {
+  if (!username || !email || !password || !job_status || !departmentId) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
@@ -78,13 +63,43 @@ export default async function handle(req, res) {
     },
   });
 
+  const department = await prisma.department.findUnique({
+    where: {
+      id: departmentId,
+    },
+  });
+
+  if (!department) {
+    return res.status(404).json({ message: "Department not found" });
+  }
+
+  if (department.companyId !== manager.Company.id) {
+    return res.status(400).json({ message: "Department does not belong to the same company as the manager" });
+  }
+
   const newEmployee = await prisma.employee.create({
     data: {
       job_status: job_status,
-      userId: newUser.id,
-      companyId: manager.Company.id,
-      departmentId: manager.Company.Department.id,
-      managerId: manager.id,
+      User: {
+        connect: {
+          id: newUser.id,
+        },
+      },
+      Company: {
+        connect: {
+          id: manager.Company.id,
+        },
+      },
+      Department: {
+        connect: {
+          id: departmentId,
+        },
+      },
+      Manager: {
+        connect: {
+          id: manager.id,
+        },
+      },
     },
   });
 

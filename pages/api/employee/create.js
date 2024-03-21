@@ -27,13 +27,10 @@ export default async function handle(req, res) {
     address,
     birth_date,
     gender,
-    job_status,
     phone,
-    companyId,
-    departmentId,
   } = req.body;
 
-  if (!name || !address || !birth_date || !gender || !job_status || !phone || !companyId || !departmentId) {
+  if (!name || !address || !birth_date || !gender || !phone) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
@@ -43,36 +40,24 @@ export default async function handle(req, res) {
     },
   });
 
-  if (employee) {
-    return res.status(400).json({ message: "Employee already exists" });
+  if (!employee) {
+    return res.status(404).json({ message: "Employee not found" });
   }
 
-  const manager = await prisma.manager.findFirst({
+  const updatedEmployee = await prisma.employee.update({
     where: {
-      companyId: companyId,
+      id: employee.id,
     },
-  });
-
-  if (!manager) {
-    return res.status(404).json({ message: "Manager not found" });
-  }
-
-  const newEmployee = await prisma.employee.create({
     data: {
       name: name,
       address: address,
       birth_date: new Date(birth_date),
       gender: gender,
-      job_status: job_status,
       phone: phone,
-      userId: decoded.id,
-      companyId: companyId,
-      departmentId: departmentId,
-      managerId: manager.id,
     },
   });
 
   res
     .status(200)
-    .json({ message: "Employee created successfully", newEmployee });
+    .json({ message: "Employee data updated successfully", updatedEmployee });
 }
