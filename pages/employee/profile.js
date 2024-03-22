@@ -3,7 +3,7 @@ import RoleBasedLayout from "@/components/data/helper/RoleBasedLayout";
 import api from "@/components/data/utils/api";
 
 const EmployeeProfilePage = () => {
-  const [employees, setEmployees] = useState([]);
+  const [employee, setEmployee] = useState();
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [birth_date, setBirthDate] = useState("");
@@ -16,8 +16,8 @@ const EmployeeProfilePage = () => {
     setLoading(true);
     try {
       const res = await api.get("/api/employee/all");
-      const data = res.data.employees;
-      setEmployees(data);
+      const data = res.data.employee;
+      setEmployee(data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -58,37 +58,46 @@ const EmployeeProfilePage = () => {
   }, []);
 
   useEffect(() => {
+    console.log(employee);
     setIsDataComplete(
-      employees &&
-        employees.length > 0 &&
-        employees.every(
-          (employee) =>
-            employee.name &&
-            employee.address &&
-            employee.birth_date &&
-            employee.gender &&
-            employee.phone
-        )
+      employee &&
+        employee.name &&
+        employee.address &&
+        employee.birth_date &&
+        employee.gender &&
+        employee.phone
     );
-  }, [employees]);
+  }, [employee]);
 
   return (
     <div className="flex flex-col h-screen">
       <div className="flex-grow">
         <div className="p-4 bg-white border rounded-lg shadow-sm">
-          {isDataComplete && employees.length > 0 ? (
-            employees.map((employee, index) => (
-              <div
-                key={employee.id || index}
-                className="flex flex-col items-center justify-start"
-              >
-                <h1 className="text-3xl font-semibold">Employee Profile</h1>
-                <div className="flex items-center gap-4">
-                  <p className="text-gray-500">Name:</p>
-                  <span>{employee.name}</span>
-                </div>
+          {isDataComplete ? (
+            <div
+              key={employee.id || index}
+              className="flex flex-col justify-start bg-white shadow-md rounded-lg p-6 m-4"
+            >
+              <h1 className="text-3xl font-semibold mb-4">Employee Profile</h1>
+              <div className="flex items-center gap-4 mb-2">
+                <p className="text-gray-500 w-24 flex-none">Address:</p>
+                <span className="text-gray-700">{employee.address}</span>
               </div>
-            ))
+              <div className="flex items-center gap-4 mb-2">
+                <p className="text-gray-500 w-24">Birth Date:</p>
+                <span className="text-gray-700">
+                  {new Date(employee.birth_date).toLocaleDateString("en-GB")}
+                </span>
+              </div>
+              <div className="flex items-center gap-4 mb-2">
+                <p className="text-gray-500 w-24">Gender:</p>
+                <span className="text-gray-700">{employee.gender}</span>
+              </div>
+              <div className="flex items-center gap-4 mb-2">
+                <p className="text-gray-500 w-24">Phone:</p>
+                <span className="text-gray-700">{employee.phone}</span>
+              </div>
+            </div>
           ) : (
             <div>
               <form onSubmit={handleSubmit}>

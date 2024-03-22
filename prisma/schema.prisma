@@ -42,6 +42,12 @@ enum TaskStatus {
   COMPLETED
 }
 
+enum TaskReportStatus {
+  UNVERIFIED
+  VERIFIED
+  REJECTED
+}
+
 model User {
   id        Int       @id @default(autoincrement())
   username  String
@@ -65,6 +71,7 @@ model Manager {
   User      User       @relation(fields: [userId], references: [id])
   Employee  Employee[]
   Company   Company?   @relation(fields: [companyId], references: [id])
+  Task      Task[]
 }
 
 model Employee {
@@ -144,15 +151,18 @@ model Task {
   updatedAt   DateTime     @updatedAt
   Employee    Employee     @relation(fields: [employeeId], references: [id])
   TaskReport  TaskReport[]
+  Manager     Manager      @relation(fields: [managerId], references: [id])
+  managerId   Int
 }
 
 model TaskReport {
-  id          Int      @id @default(autoincrement())
+  id          Int              @id @default(autoincrement())
   title       String
   description String
   file        String
+  status      TaskReportStatus @default(UNVERIFIED)
   taskId      Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  Task        Task     @relation(fields: [taskId], references: [id])
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  Task        Task             @relation(fields: [taskId], references: [id])
 }
