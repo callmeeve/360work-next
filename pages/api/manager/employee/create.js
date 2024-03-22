@@ -65,7 +65,7 @@ export default async function handle(req, res) {
 
   const department = await prisma.department.findUnique({
     where: {
-      id: departmentId,
+      id: parseInt(departmentId),
     },
   });
 
@@ -74,7 +74,9 @@ export default async function handle(req, res) {
   }
 
   if (department.companyId !== manager.Company.id) {
-    return res.status(400).json({ message: "Department does not belong to the same company as the manager" });
+    return res.status(400).json({
+      message: "Department does not belong to the same company as the manager",
+    });
   }
 
   const newEmployee = await prisma.employee.create({
@@ -92,7 +94,7 @@ export default async function handle(req, res) {
       },
       Department: {
         connect: {
-          id: departmentId,
+          id: parseInt(departmentId),
         },
       },
       Manager: {

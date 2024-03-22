@@ -55,36 +55,36 @@ model User {
 }
 
 model Manager {
-  id        Int       @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   name      String?
-  secretKey String    @unique
-  userId    Int       @unique
+  secretKey String     @unique
+  userId    Int        @unique
   companyId Int?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  User      User      @relation(fields: [userId], references: [id])
-  Employee  Employee?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  User      User       @relation(fields: [userId], references: [id])
+  Employee  Employee[]
   Company   Company?   @relation(fields: [companyId], references: [id])
 }
 
 model Employee {
-  id           Int        @id @default(autoincrement())
+  id           Int          @id @default(autoincrement())
   name         String?
   address      String?
   birth_date   DateTime?
   gender       Gender?
   job_status   JobStatus
   phone        String?
-  userId       Int        @unique
+  userId       Int          @unique
   companyId    Int
   departmentId Int
-  managerId    Int        @unique
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  User         User       @relation(fields: [userId], references: [id])
-  Company      Company    @relation(fields: [companyId], references: [id])
-  Department   Department @relation(fields: [departmentId], references: [id])
-  Manager      Manager    @relation(fields: [managerId], references: [id])
+  managerId    Int
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  User         User         @relation(fields: [userId], references: [id])
+  Company      Company      @relation(fields: [companyId], references: [id])
+  Department   Department   @relation(fields: [departmentId], references: [id])
+  Manager      Manager      @relation(fields: [managerId], references: [id])
   Attendance   Attendance[]
   WorkTime     WorkTime[]
   Task         Task[]
@@ -113,46 +113,46 @@ model Department {
 }
 
 model Attendance {
-  id           Int             @id @default(autoincrement())
-  date         DateTime
-  status       AttendanceStatus
-  employeeId   Int
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-  Employee     Employee        @relation(fields: [employeeId], references: [id])
+  id         Int              @id @default(autoincrement())
+  date       DateTime
+  status     AttendanceStatus
+  employeeId Int
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  Employee   Employee         @relation(fields: [employeeId], references: [id])
 }
 
 model WorkTime {
-  id           Int      @id @default(autoincrement())
-  date         DateTime
-  start_time   DateTime
-  end_time     DateTime
-  employeeId   Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  Employee     Employee @relation(fields: [employeeId], references: [id])
+  id         Int      @id @default(autoincrement())
+  date       DateTime
+  start_time DateTime
+  end_time   DateTime
+  employeeId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  Employee   Employee @relation(fields: [employeeId], references: [id])
 }
 
 model Task {
-  id           Int      @id @default(autoincrement())
-  title        String
-  description  String
-  status       TaskStatus @default(PENDING)
-  file         String?  @default("")
-  employeeId   Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  Employee     Employee @relation(fields: [employeeId], references: [id])
-  TaskReport   TaskReport[]
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String
+  status      TaskStatus   @default(PENDING)
+  file        String?      @default("")
+  employeeId  Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  Employee    Employee     @relation(fields: [employeeId], references: [id])
+  TaskReport  TaskReport[]
 }
 
 model TaskReport {
-  id           Int      @id @default(autoincrement())
-  title        String
-  description  String
-  file         String
-  taskId       Int
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  Task         Task     @relation(fields: [taskId], references: [id])
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  file        String
+  taskId      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  Task        Task     @relation(fields: [taskId], references: [id])
 }

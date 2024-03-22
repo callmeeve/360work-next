@@ -5,7 +5,7 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [jobStatus, setJobStatus] = useState("");
+  const [job_status, setJobStatus] = useState("ACTIVE");
   const [departmentId, setDepartmentId] = useState("");
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -31,25 +31,29 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      await api.post("/api/manager/employee/create", {
+      const res = await api.post("/api/manager/employee/create", {
         username,
         email,
         password,
-        jobStatus,
+        job_status,
         departmentId,
       });
 
-      setUsername("");
-      setEmail("");
-      setPassword("");
-      setJobStatus("");
-      setDepartmentId("");
+      if (res.status === 200) {
+        console.log("Employee added successfully");
+        setUsername("");
+        setEmail("");
+        setPassword("");
+        setJobStatus("ACTIVE");
+        setDepartmentId("");
 
-      alert("Employee created successfully");
-      window.location.reload();
+        alert("Employee added successfully");
+        window.location.reload();
+      }
     } catch (error) {
-      setError(error.message);
+      setError(error.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -63,7 +67,7 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
       <div className="fixed inset-0 flex w-screen items-center justify-center">
         <div className="w-1/2 rounded bg-white p-12">
           <h3 className="text-xl leading-6 font-semibold text-gray-800">
-            Add Department
+            Add Employee
           </h3>
           <div className="mt-4">
             {error && <p className="text-red-500">{error}</p>}
@@ -119,7 +123,7 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
                   required
                 />
               </div>
-              <div className="mb-5">
+              {/* <div className="mb-5">
                 <label
                   htmlFor="jobStatus"
                   className="block mb-2 text-sm font-medium text-gray-800"
@@ -137,7 +141,7 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
                   <option value="ACTIVE">ACTIVE</option>
                   <option value="INACTIVE">INACTIVE</option>
                 </select>
-              </div>
+              </div> */}
               <div className="mb-5">
                 <label
                   htmlFor="departmentId"
