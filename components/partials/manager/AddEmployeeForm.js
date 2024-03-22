@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "@/components/data/utils/api";
 
 export default function AddEmployeeForm({ isOpen, onClose }) {
@@ -7,8 +7,26 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
   const [password, setPassword] = useState("");
   const [jobStatus, setJobStatus] = useState("");
   const [departmentId, setDepartmentId] = useState("");
+  const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const getDepartments = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get("/api/manager/department/all");
+      const data = res.data.departments;
+      setDepartments(data);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getDepartments();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,10 +36,10 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
         username,
         email,
         password,
-        job_status: jobStatus,
-        departmentId: parseInt(departmentId),
+        jobStatus,
+        departmentId,
       });
-      
+
       setUsername("");
       setEmail("");
       setPassword("");
@@ -127,15 +145,20 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
                 >
                   Department ID
                 </label>
-                <input
-                  type="text"
+                <select
                   id="departmentId"
                   value={departmentId}
                   onChange={(e) => setDepartmentId(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  placeholder="Enter department ID"
                   required
-                />
+                >
+                  <option value="">Select department</option>
+                  {departments.map((department) => (
+                    <option key={department.id} value={department.id}>
+                      {department.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="flex justify-end">
                 <button
