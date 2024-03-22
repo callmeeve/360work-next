@@ -3,11 +3,13 @@ import RoleBasedLayout from "@/components/data/helper/RoleBasedLayout";
 import { HiOutlineTrash, HiPencilSquare } from "react-icons/hi2";
 import api from "@/components/data/utils/api";
 import { IoFilter } from "react-icons/io5";
+import AddEmployeeForm from "@/components/partials/manager/AddEmployeeForm";
 
 const ManagerEmployeePage = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const employeesPerPage = 5; // Change this to the number of employees you want to display per page
@@ -51,6 +53,14 @@ const ManagerEmployeePage = () => {
   for (let i = 1; i <= totalPages; i++) {
     pageNumbers.push(i);
   }
+
+  const openModal = () => {
+    setIsOpen(true);
+  };
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+
   return (
     <div className="flex flex-col h-screen">
       <div className="flex-grow my-4">
@@ -60,13 +70,23 @@ const ManagerEmployeePage = () => {
               <h1 className="text-2xl font-semibold text-gray-800">
                 Employees
               </h1>
-              <button
-                type="button"
-                className="inline-flex px-3 py-2 items-center gap-x-2 text-sm font-medium rounded border border-blue-500 text-blue-500 hover:text-white hover:bg-blue-500 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                <IoFilter className="w-5 h-5" />
-                Filter Table
-              </button>
+              <div className="flex items-center gap-x-2 ml-auto">
+                <button
+                  type="button"
+                  onClick={openModal}
+                  className="inline-flex px-3 py-2 items-center gap-x-2 text-sm font-medium rounded border border-green-500 text-green-500 hover:text-white hover:bg-green-500 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  Add Employee
+                </button>
+                <AddEmployeeForm isOpen={isOpen} onClose={closeModal} />
+                <button
+                  type="button"
+                  className="inline-flex px-3 py-2 items-center gap-x-2 text-sm font-medium rounded border border-blue-500 text-blue-500 hover:text-white hover:bg-blue-500 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  <IoFilter className="w-5 h-5" />
+                  Filter Table
+                </button>
+              </div>
             </div>
             <div className="-m-2 overflow-x-auto">
               <div className="p-4 min-w-full inline-block align-middle">
@@ -92,7 +112,7 @@ const ManagerEmployeePage = () => {
                           scope="col"
                           className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
                         >
-                          Name
+                          Username
                         </th>
                         <th
                           scope="col"
@@ -124,7 +144,7 @@ const ManagerEmployeePage = () => {
                       {displayedEmployees.map((employee, idx) => (
                         <tr key={idx}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                            {employee.name}
+                            {employee.User.username}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                             {employee.User.email}
