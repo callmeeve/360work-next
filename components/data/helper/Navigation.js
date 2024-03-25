@@ -15,7 +15,7 @@ const Navigation = [
     role: "EMPLOYEE",
     menu: [
       { name: "Dashboard", href: "/employee", icon: IoGridOutline },
-      { name: "Leave", href: "/employee/leave", icon: IoCalendarOutline },
+      { name: "Attendance", href: "/employee/attendance", icon: IoCalendarOutline },
     ],
   },
 ];

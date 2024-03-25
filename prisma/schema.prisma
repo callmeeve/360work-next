@@ -95,6 +95,7 @@ model Employee {
   Attendance   Attendance[]
   WorkTime     WorkTime[]
   Task         Task[]
+  Schedule     Schedule[]
 }
 
 model Company {
@@ -138,6 +139,18 @@ model WorkTime {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   Employee   Employee @relation(fields: [employeeId], references: [id])
+  Schedule   Schedule @relation(fields: [scheduleId], references: [id])
+  scheduleId Int
+}
+
+model Schedule {
+  id         Int        @id @default(autoincrement())
+  date       DateTime
+  employeeId Int
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  Employee   Employee   @relation(fields: [employeeId], references: [id])
+  WorkTime   WorkTime[]
 }
 
 model Task {
