@@ -9,6 +9,7 @@ const Navigation = [
       { name: "Employee", href: "/manager/employee", icon: IoPeopleOutline },
       { name: "Company", href: "/manager/company", icon: HiOutlineBuildingOffice },
       { name: "Department", href: "/manager/department", icon: HiOutlineBuildingOffice2 },
+      { name: "Schedule", href: "/manager/schedule", icon: HiOutlineBuildingOffice2 },
     ],
   },
   {
