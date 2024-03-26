@@ -20,24 +20,26 @@ enum Role {
 }
 
 enum Gender {
-  MALE
-  FEMALE
-  OTHER
+  PRIA
+  WANITA
 }
 
 enum JobStatus {
-  ACTIVE
-  INACTIVE
+  CONTRACT
+  PERMANENT
+  PROJECT
 }
 
 enum AttendanceStatus {
   PRESENT
   ABSENT
+  LATE
+  OVER_TIME
   LEAVE
+  SICK
 }
 
 enum TaskStatus {
-  PENDING
   IN_PROGRESS
   COMPLETED
 }
@@ -93,9 +95,30 @@ model Employee {
   Department   Department   @relation(fields: [departmentId], references: [id])
   Manager      Manager      @relation(fields: [managerId], references: [id])
   Attendance   Attendance[]
-  WorkTime     WorkTime[]
   Task         Task[]
   Schedule     Schedule[]
+}
+
+model Attendance {
+  id        Int              @id @default(autoincrement())
+  image      String
+  date       DateTime
+  status     AttendanceStatus
+  employeeId Int
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  Employee   Employee         @relation(fields: [employeeId], references: [id])
+}
+
+model Schedule {
+  id        Int        @id @default(autoincrement())
+  date      DateTime
+  startTime  DateTime
+  endTime    DateTime
+  employeeId Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Employee  Employee   @relation(fields: [employeeId], references: [id])
 }
 
 model Company {
@@ -120,44 +143,11 @@ model Department {
   Employee  Employee[]
 }
 
-model Attendance {
-  id         Int              @id @default(autoincrement())
-  date       DateTime
-  status     AttendanceStatus
-  employeeId Int
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
-  Employee   Employee         @relation(fields: [employeeId], references: [id])
-}
-
-model WorkTime {
-  id         Int      @id @default(autoincrement())
-  date       DateTime
-  start_time DateTime
-  end_time   DateTime
-  employeeId Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  Employee   Employee @relation(fields: [employeeId], references: [id])
-  Schedule   Schedule @relation(fields: [scheduleId], references: [id])
-  scheduleId Int
-}
-
-model Schedule {
-  id         Int        @id @default(autoincrement())
-  date       DateTime
-  employeeId Int
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  Employee   Employee   @relation(fields: [employeeId], references: [id])
-  WorkTime   WorkTime[]
-}
-
 model Task {
   id          Int          @id @default(autoincrement())
   title       String
   description String
-  status      TaskStatus   @default(PENDING)
+  status      TaskStatus   @default(IN_PROGRESS)
   file        String?      @default("")
   employeeId  Int
   createdAt   DateTime     @default(now())

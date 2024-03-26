@@ -6,14 +6,10 @@ export default function Register() {
   const router = useRouter();
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token");
 
-    if (user) {
-      if (user.role === "EMPLOYEE") {
-        router.push("/employee");
-      } else if (user.role === "MANAGER") {
-        router.push("/manager");
-      }
+    if (token) {
+      router.push("/");
     }
   }, []);
 

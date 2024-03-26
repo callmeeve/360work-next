@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Sidebar from "../partials/Sidebar";
 import { Popover } from "@headlessui/react";
 import Image from "next/image";
-import { IoChevronDown, IoLogOutOutline, IoPersonCircleOutline } from "react-icons/io5";
 import Link from "next/link";
+import { IoLogOutOutline, IoPersonCircleOutline, IoChevronDown } from "react-icons/io5";
 
-function ManagerLayout({ children }) {
+function AdminLayout({ children }) {
   const [users, setUsers] = useState(null);
   const router = useRouter();
 
@@ -14,7 +14,7 @@ function ManagerLayout({ children }) {
     const token = localStorage.getItem("token");
     const user = JSON.parse(localStorage.getItem("user"));
     if (!token) {
-      router.push("/login");
+      router.push("/login/admin");
     } else if (user) {
       setUsers(user);
     }
@@ -27,7 +27,7 @@ function ManagerLayout({ children }) {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    router.push("/login");
+    router.push("/login/admin");
   };
 
   if (!users) {
@@ -47,7 +47,7 @@ function ManagerLayout({ children }) {
             <Popover className="relative">
               {({ open }) => (
                 <>
-                  <Popover.Button className="flex items-center justify-end focus:outline-none">
+                  <Popover.Button  className="flex items-center justify-end focus:outline-none">
                     <Image
                       className="rounded-full cursor-pointer"
                       src="/avatar.svg"
@@ -64,7 +64,10 @@ function ManagerLayout({ children }) {
                   >
                     <ul className="flex flex-col gap-y-2 p-2">
                       <li>
-                        <Link href="/manager/profile" className="w-full flex items-center text-gray-800 hover:bg-blue-500 hover:text-white px-2 py-1 rounded-md">
+                        <Link
+                          href="/employee/profile"
+                          className="w-full flex items-center text-gray-800 hover:bg-blue-500 hover:text-white px-2 py-1 rounded-md"
+                        >
                           <IoPersonCircleOutline className="w-6 h-6 mr-2" />
                           <span className="text-sm">Profile</span>
                         </Link>
@@ -91,4 +94,4 @@ function ManagerLayout({ children }) {
   );
 }
 
-export default ManagerLayout;
+export default AdminLayout;

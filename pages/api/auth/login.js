@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
-    const { email, password } = req.body;
+    const { email, password, secretKey } = req.body;
 
     let user;
     try {
@@ -19,6 +19,18 @@ export default async function handler(req, res) {
 
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    if (user.role === "MANAGER") {
+      const manager = await prisma.manager.findUnique({
+        where: {
+          userId: user.id,
+        },
+      });
+
+      if (!manager || manager.secretKey !== secretKey) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
     }
 
     let isMatch;
@@ -38,7 +50,7 @@ export default async function handler(req, res) {
         { id: user.id, email: user.email, role: user.role },
         process.env.JWT_SECRET,
         {
-          expiresIn: "30d",
+          expiresIn: "1h",
         }
       );
     } catch (error) {

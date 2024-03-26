@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [secretKey, setSecretKey] = useState("");
+  const [role, setRole] = useState(""); // Add role state
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -12,7 +14,7 @@ function LoginForm() {
     event.preventDefault();
 
     try {
-      const response = await axios.post("/api/auth/login", { email, password });
+      const response = await axios.post("/api/auth/login", { email, password, secretKey, role });
       const { token, user } = response.data;
 
       // Save token and user data in state or local storage
@@ -27,6 +29,7 @@ function LoginForm() {
       } else {
         router.push("/");
       }
+      
     } catch (error) {
       console.error("Error during login", error);
       // Show error message to user
@@ -63,6 +66,35 @@ function LoginForm() {
             className="w-full p-2 border rounded-md"
           />
         </div>
+        <div>
+          <label htmlFor="role" className="block">
+            Role
+          </label>
+          <select
+            id="role"
+            value={role}
+            onChange={(event) => setRole(event.target.value)}
+            className="w-full p-2 border rounded-md"
+          >
+            <option value="">Select Role</option>
+            <option value="EMPLOYEE">Employee</option>
+            <option value="MANAGER">Manager</option>
+          </select>
+        </div>
+        {role === "MANAGER" && (
+          <div>
+            <label htmlFor="secretKey" className="block">
+              Secret Key
+            </label>
+            <input
+              type="text"
+              id="secretKey"
+              value={secretKey}
+              onChange={(event) => setSecretKey(event.target.value)}
+              className="w-full p-2 border rounded-md"
+            />
+          </div>
+        )}
         <button
           type="submit"
           className="w-full p-2 text-white bg-blue-500 rounded-md"

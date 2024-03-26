@@ -14,7 +14,7 @@ function EmployeeLayout({ children }) {
     const token = localStorage.getItem("token");
     const user = JSON.parse(localStorage.getItem("user"));
     if (!token) {
-      router.push("/");
+      router.push("/login");
     } else if (user) {
       setUsers(user);
     }
@@ -27,11 +27,11 @@ function EmployeeLayout({ children }) {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    router.push("/");
+    router.push("/login");
   };
 
   if (!users) {
-    return null; // or a loading spinner, etc.
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
   return (

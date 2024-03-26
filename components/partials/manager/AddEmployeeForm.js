@@ -5,9 +5,9 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [job_status, setJobStatus] = useState("ACTIVE");
-  const [departmentId, setDepartmentId] = useState("");
+  const [job_status, setJobStatus] = useState("PERMANENT");
   const [departments, setDepartments] = useState([]);
+  const [departmentId, setDepartmentId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -46,7 +46,7 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
         setUsername("");
         setEmail("");
         setPassword("");
-        setJobStatus("ACTIVE");
+        setJobStatus("PERMANENT");
         setDepartmentId("");
 
         alert("Employee added successfully");
@@ -123,7 +123,7 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
                   required
                 />
               </div>
-              {/* <div className="mb-5">
+              <div className="mb-5">
                 <label
                   htmlFor="jobStatus"
                   className="block mb-2 text-sm font-medium text-gray-800"
@@ -132,16 +132,17 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
                 </label>
                 <select
                   id="jobStatus"
-                  value={jobStatus}
+                  value={job_status}
                   onChange={(e) => setJobStatus(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   required
                 >
                   <option value="">Select job status</option>
-                  <option value="ACTIVE">ACTIVE</option>
-                  <option value="INACTIVE">INACTIVE</option>
+                  <option value="PERMANENT">PERMANENT</option>
+                  <option value="CONTRACT">CONTRACT</option>
+                  <option value="PROJECT">PROJECT</option>
                 </select>
-              </div> */}
+              </div>
               <div className="mb-5">
                 <label
                   htmlFor="departmentId"
