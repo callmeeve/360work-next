@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import api from "@/components/data/utils/api";
 import RoleBasedLayout from "@/components/data/helper/RoleBasedLayout";
 import { HiOutlineTrash, HiPencilSquare } from "react-icons/hi2";
@@ -7,11 +7,9 @@ import AddScheduleForm from "@/components/partials/manager/AddScheduleForm";
 
 const ManagerSchedulePage = () => {
   const [schedules, setSchedules] = useState([]);
-  const [employeeName, setEmployeeName] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   const getSchedules = async () => {
     setLoading(true);
@@ -26,36 +24,9 @@ const ManagerSchedulePage = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await api.post("/api/manager/schedule/create", {
-        employeeName,
-        date,
-        time,
-      });
-      const data = res.data;
-      setSchedules([...schedules, data]);
-      setEmployeeName("");
-      setDate("");
-      setTime("");
-
-      alert("Schedule created successfully");
-
-      window.location.reload();
-    } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     getSchedules();
   }, []);
-
-  const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => {
     setIsOpen(true);
@@ -65,14 +36,6 @@ const ManagerSchedulePage = () => {
     setIsOpen(false);
   };
 
-  const handlePrevious = () => {
-    // Logic for handling previous page
-  };
-
-  const handleNext = () => {
-    // Logic for handling next page
-  };
-
   const pageNumbers = [1, 2, 3, 4, 5]; // Example page numbers
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -80,6 +43,18 @@ const ManagerSchedulePage = () => {
     (currentPage - 1) * 10,
     currentPage * 10
   );
+
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < pageNumbers.length) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen">
@@ -131,7 +106,19 @@ const ManagerSchedulePage = () => {
                           scope="col"
                           className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
                         >
-                          Day
+                          Name
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                        >
+                          Start Date
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
+                        >
+                          End Date
                         </th>
                         <th
                           scope="col"
@@ -156,15 +143,33 @@ const ManagerSchedulePage = () => {
                     <tbody className="divide-y divide-gray-200">
                       {displayedSchedules.map((schedule, idx) => (
                         <tr key={idx}>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                            {schedule.day}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            {schedule.Employee.name}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                            {schedule.startTime}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            {new Date(schedule.startDate).toLocaleDateString()}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                            {schedule.endTime}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            {new Date(schedule.endDate).toLocaleDateString()}
                           </td>
+                          {schedule.WorkTime.map((workTime, index) => (
+                            <Fragment key={index}>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                {isNaN(Date.parse(workTime.startTime))
+                                  ? "Invalid date"
+                                  : new Date(
+                                      workTime.startTime
+                                    ).toLocaleTimeString()}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                {isNaN(Date.parse(workTime.endTime))
+                                  ? "Invalid date"
+                                  : new Date(
+                                      workTime.endTime
+                                    ).toLocaleTimeString()}
+                              </td>
+                            </Fragment>
+                          ))}
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <button
                               type="button"

@@ -1,18 +1,75 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import api from "@/components/data/utils/api";
 
 const CreateScheduleModal = ({ isOpen, onClose }) => {
-  const [employee, setEmployee] = useState("");
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
-  const [every, setEvery] = useState([]);
-  const [isFixed, setIsFixed] = useState(true);
-  const [fixedTime, setFixedTime] = useState({ startTime: "", endTime: "" });
-  const [flexibleTime, setFlexibleTime] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [employeeId, setEmployeeId] = useState("");
+  const [days, setDays] = useState([]);
+  const [workTimes, setWorkTimes] = useState([{ startTime: "", endTime: "" }]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Logic to handle form submission
+  const handleTimeChange = (index, field, value) => {
+    const newWorkTimes = [...workTimes];
+    newWorkTimes[index][field] = value;
+    setWorkTimes(newWorkTimes);
   };
+
+  const getEmployees = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get("/api/manager/employee/all");
+      const data = res.data.employees;
+      setEmployees(data);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getEmployees();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const res = await api.post("/api/manager/schedule/create", {
+        startDate,
+        endDate,
+        days,
+        employeeId,
+        workTimes,
+      });
+
+      console.log(res.status);
+
+      if (res.status === 201) {
+        console.log("Schedule added successfully");
+        
+        setStartDate("");
+        setEndDate("");
+        setEmployeeId("");
+        setDays([]);
+        setWorkTimes([{ startTime: "", endTime: "" }]);
+
+        alert("Schedule added successfully");
+        window.location.reload();
+      }
+    } catch (error) {
+      setError(error.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+        
+
+  if (!isOpen) return null;
 
   return (
     isOpen && (
@@ -29,44 +86,48 @@ const CreateScheduleModal = ({ isOpen, onClose }) => {
               </label>
               <select
                 id="employee"
-                value={employee}
-                onChange={(e) => setEmployee(e.target.value)}
+                value={employeeId}
+                onChange={(e) => setEmployeeId(e.target.value)}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                 required
               >
                 <option value="">Select Employee</option>
-                {/* Add options for employees */}
+                {employees.map((employee) => (
+                  <option key={employee.id} value={employee.id}>
+                    {employee.User.username}
+                  </option>
+                ))}
               </select>
             </div>
             <div className="mb-5 flex gap-4">
               <div>
                 <label
-                  htmlFor="from"
+                  htmlFor="startDate"
                   className="block mb-2 text-sm font-medium text-gray-800"
                 >
-                  From
+                  Start Date
                 </label>
                 <input
                   type="date"
-                  id="from"
-                  value={from}
-                  onChange={(e) => setFrom(e.target.value)}
+                  id="startDate"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   required
                 />
               </div>
               <div>
                 <label
-                  htmlFor="to"
+                  htmlFor="endDate"
                   className="block mb-2 text-sm font-medium text-gray-800"
                 >
-                  To
+                  End Date
                 </label>
                 <input
                   type="date"
-                  id="to"
-                  value={to}
-                  onChange={(e) => setTo(e.target.value)}
+                  id="endDate"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                   required
                 />
@@ -74,7 +135,7 @@ const CreateScheduleModal = ({ isOpen, onClose }) => {
             </div>
             <div className="mb-5">
               <label className="block mb-2 text-sm font-medium text-gray-800">
-                Every
+                Days
               </label>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -86,132 +147,72 @@ const CreateScheduleModal = ({ isOpen, onClose }) => {
                   "Saturday",
                   "Sunday",
                 ].map((day) => (
-                  <div key={day} className="basis-24">
-                    <label className="inline-flex items-center">
-                      <input
-                        type="checkbox"
-                        value={day}
-                        checked={every.includes(day)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setEvery([...every, day]);
-                          } else {
-                            setEvery(every.filter((d) => d !== day));
-                          }
-                        }}
-                      />
-                      <span className="ml-2">{day}</span>
-                    </label>
-                  </div>
+                  <label key={day} className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      value={day}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setDays([...days, e.target.value.toUpperCase()]);
+                        } else {
+                          setDays(
+                            days.filter(
+                              (d) => d !== e.target.value.toUpperCase()
+                            )
+                          );
+                        }
+                      }}
+                      className="text-blue-500"
+                    />
+                    {day}
+                  </label>
                 ))}
               </div>
             </div>
-            <div>
-              <div className="mb-5">
-                <label className="block mb-2 text-sm font-medium text-gray-800">
-                  Schedule Type
-                </label>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="fixed"
-                    value="fixed"
-                    checked={isFixed}
-                    onChange={() => setIsFixed(true)}
-                    className="mr-2"
-                  />
-                  <label htmlFor="fixed" className="mr-4">
-                    Fixed
-                  </label>
-                  <input
-                    type="radio"
-                    id="flexible"
-                    value="flexible"
-                    checked={!isFixed}
-                    onChange={() => setIsFixed(false)}
-                  />
-                  <label htmlFor="flexible">Flexible</label>
-                </div>
-              </div>
-            </div>
-            {isFixed ? (
-              <div className="mb-5">
-                <label className="block mb-2 text-sm font-medium text-gray-800">
-                  Fixed Time
-                </label>
-                <div className="flex">
+            <div className="mb-5">
+              <label className="block mb-2 text-sm font-medium text-gray-800">
+                Work Time
+              </label>
+              {workTimes.map((workTime, index) => (
+                <div className="flex" key={index}>
                   <input
                     type="time"
-                    value={fixedTime.startTime}
+                    value={workTime.startTime}
                     onChange={(e) =>
-                      setFixedTime({ ...fixedTime, startTime: e.target.value })
+                      handleTimeChange(index, "startTime", e.target.value)
                     }
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mr-2"
                     required
                   />
                   <input
                     type="time"
-                    value={fixedTime.endTime}
+                    value={workTime.endTime}
                     onChange={(e) =>
-                      setFixedTime({ ...fixedTime, endTime: e.target.value })
+                      handleTimeChange(index, "endTime", e.target.value)
                     }
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     required
                   />
                 </div>
-              </div>
-            ) : (
-              every.map((day, index) => (
-                <div key={index} className="mb-5">
-                  <label className="block mb-2 text-sm font-medium text-gray-800">
-                    {day} Time
-                  </label>
-                  <div className="flex">
-                    <input
-                      type="time"
-                      value={flexibleTime[index]?.startTime || ""}
-                      onChange={(e) => {
-                        const newTimes = [...flexibleTime];
-                        newTimes[index] = {
-                          ...newTimes[index],
-                          startTime: e.target.value,
-                        };
-                        setFlexibleTime(newTimes);
-                      }}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mr-2"
-                      required
-                    />
-                    <input
-                      type="time"
-                      value={flexibleTime[index]?.endTime || ""}
-                      onChange={(e) => {
-                        const newTimes = [...flexibleTime];
-                        newTimes[index] = {
-                          ...newTimes[index],
-                          endTime: e.target.value,
-                        };
-                        setFlexibleTime(newTimes);
-                      }}
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                      required
-                    />
-                  </div>
-                </div>
-              ))
-            )}
-            <button
-              type="submit"
-              className="bg-blue-500 text-white py-2 px-4 rounded-lg"
-            >
-              Create
-            </button>
+              ))}
+            </div>
+            {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+            <div className="flex justify-end gap-2">
+              <button
+                type="submit"
+                className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+              >
+                {loading ? "Loading..." : "Create"}
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-lg"
+              >
+                Cancel
+              </button>
+            </div>
           </form>
-          <button
-            onClick={onClose}
-            className="bg-gray-300 text-gray-800 py-2 px-4 rounded-lg mt-4"
-          >
-            Cancel
-          </button>
         </div>
       </div>
     )
