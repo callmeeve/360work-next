@@ -60,17 +60,17 @@ enum Days {
   SATURDAY
 }
 
-
 model User {
-  id        Int       @id @default(autoincrement())
-  username  String
-  email     String    @unique
-  password  String
-  role      Role
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Employee  Employee?
-  Manager   Manager?
+  id           Int            @id @default(autoincrement())
+  username     String
+  email        String         @unique
+  password     String
+  role         Role
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Employee     Employee?
+  Manager      Manager?
+  Notification Notification[]
 }
 
 model Manager {
@@ -111,7 +111,7 @@ model Employee {
 }
 
 model Attendance {
-  id        Int              @id @default(autoincrement())
+  id         Int              @id @default(autoincrement())
   image      String
   date       DateTime
   clockIn    DateTime
@@ -124,32 +124,32 @@ model Attendance {
 }
 
 model Schedule {
-  id        Int        @id @default(autoincrement())
-  startDate DateTime
-  endDate   DateTime
+  id         Int        @id @default(autoincrement())
+  startDate  DateTime
+  endDate    DateTime
   employeeId Int
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Employee  Employee   @relation(fields: [employeeId], references: [id])
-  WorkTime  WorkTime[]
-  Day      Day[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  Employee   Employee   @relation(fields: [employeeId], references: [id])
+  WorkTime   WorkTime[]
+  Day        Day[]
 }
 
 model Day {
-  id        Int        @id @default(autoincrement())
-  day       Days
+  id         Int      @id @default(autoincrement())
+  day        Days
   scheduleId Int
-  Schedule  Schedule   @relation(fields: [scheduleId], references: [id])
+  Schedule   Schedule @relation(fields: [scheduleId], references: [id])
 }
 
 model WorkTime {
-  id        Int        @id @default(autoincrement())
-  startTime DateTime
-  endTime   DateTime
+  id         Int      @id @default(autoincrement())
+  startTime  DateTime
+  endTime    DateTime
   scheduleId Int
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Schedule  Schedule   @relation(fields: [scheduleId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  Schedule   Schedule @relation(fields: [scheduleId], references: [id])
 }
 
 model Company {
@@ -199,4 +199,15 @@ model TaskReport {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   Task        Task             @relation(fields: [taskId], references: [id])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
 }

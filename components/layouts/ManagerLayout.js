@@ -7,9 +7,9 @@ import {
   IoChevronDown,
   IoLogOutOutline,
   IoPersonCircleOutline,
-  IoNotifications,
 } from "react-icons/io5";
 import Link from "next/link";
+import Notification from "../data/helper/Notification";
 
 function ManagerLayout({ children }) {
   const [users, setUsers] = useState(null);
@@ -51,41 +51,7 @@ function ManagerLayout({ children }) {
                 {users.role}
               </span>
             </div>
-            <div className="relative ml-auto mr-4">
-              <Popover className="relative">
-                {({ open }) => (
-                  <>
-                    <Popover.Button className="flex items-center justify-center focus:outline-none">
-                      <IoNotifications className="text-gray-800 w-6 h-6" />
-                    </Popover.Button>
-                    <Popover.Panel
-                      className={`${
-                        open ? "block" : "hidden"
-                      } absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg`}
-                    >
-                      <ul className="flex flex-col gap-y-2 p-2">
-                        <li>
-                          <a
-                            href="#"
-                            className="w-full flex items-center text-gray-800 hover:bg-blue-500 hover:text-white px-2 py-1 rounded-md"
-                          >
-                            <span className="text-sm">Notification 1</span>
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="#"
-                            className="w-full flex items-center text-gray-800 hover:bg-blue-500 hover:text-white px-2 py-1 rounded-md"
-                          >
-                            <span className="text-sm">Notification 2</span>
-                          </a>
-                        </li>
-                      </ul>
-                    </Popover.Panel>
-                  </>
-                )}
-              </Popover>
-            </div>
+            <Notification />
             <Popover className="relative">
               {({ open }) => (
                 <>

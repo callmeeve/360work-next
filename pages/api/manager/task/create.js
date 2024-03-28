@@ -65,58 +65,66 @@ export default async function handle(req, res) {
     }
 
     if (decoded.role !== "MANAGER") {
-        return res.status(403).json({ message: "You are not authorized" });
-        }
-
-    const manager = await prisma.manager.findUnique({
-        where: {
-            userId: decoded.id,
-        },
-        include: {
-            Company: true,
-        },
-    });
-    
-
-    if (!manager) {
-        return res.status(404).json({ message: "Manager not found" });
+      return res.status(403).json({ message: "You are not authorized" });
     }
 
-    const { title, description, status, employeeId } = req.body;
+    const manager = await prisma.manager.findUnique({
+      where: {
+        userId: decoded.id,
+      },
+      include: {
+        Company: true,
+      },
+    });
 
-    if (!title || !description || !status || !employeeId) {
-        return res.status(400).json({ message: "Missing required fields" });
+    if (!manager) {
+      return res.status(404).json({ message: "Manager not found" });
+    }
+
+    const { title, description, employeeId } = req.body;
+
+    if (!title || !description || !employeeId) {
+      return res.status(400).json({ message: "Missing required fields" });
     }
 
     const employee = await prisma.employee.findUnique({
-        where: {
-            id: parseInt(employeeId),
-        },
+      where: {
+        id: parseInt(employeeId),
+      },
     });
 
     if (!employee) {
-        return res.status(404).json({ message: "Employee not found" });
+      return res.status(404).json({ message: "Employee not found" });
     }
 
     const task = await prisma.task.create({
-        data: {
-            title: title,
-            description: description,
-            status: status,
-            file: req.file ? req.file.filename : "",
-            Employee: {
-                connect: {
-                    id: employee.id,
-                },
-            },
-            Manager: {
-                connect: {
-                    id: manager.id,
-                },
-            },
+      data: {
+        title: title,
+        description: description,
+        status: "IN_PROGRESS",
+        file: req.file ? req.file.filename : "",
+        Employee: {
+          connect: {
+            id: employee.id,
+          },
         },
+        Manager: {
+          connect: {
+            id: manager.id,
+          },
+        },
+      },
     });
 
-    return res.status(201).json(task);
-   });
+    const notification = await prisma.notification.create({
+      data: {
+        title: task.title,
+        message: `New task assigned by ${manager.Company.name}`,
+        read: false,
+        userId: employee.userId,
+      },
+    });
+
+    return res.status(201).json(task, notification);
+  });
 }

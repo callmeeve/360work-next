@@ -5,6 +5,7 @@ import { Popover } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
 import { IoLogOutOutline, IoPersonCircleOutline, IoChevronDown } from "react-icons/io5";
+import Notification from "../data/helper/Notification";
 
 function EmployeeLayout({ children }) {
   const [users, setUsers] = useState(null);
@@ -44,6 +45,7 @@ function EmployeeLayout({ children }) {
               <h1 className="font-medium">Welcome, {users.username}</h1>
               <span className="text-gray-500 text-sm lowercase">{users.role}</span>
             </div>
+            <Notification />
             <Popover className="relative">
               {({ open }) => (
                 <>

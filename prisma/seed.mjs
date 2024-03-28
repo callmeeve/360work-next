@@ -19,15 +19,15 @@ async function main() {
       },
     },
   });
-  const usernameEmployee = "fiki";
-  const registerEmployee = await prisma.user.create({
-    data: {
-      username: usernameEmployee,
-      email: "fiki@example.com",
-      password: bcrypt.hashSync("password", 10),
-      role: "EMPLOYEE",
-    },
-  });
+  // const usernameEmployee = "fiki";
+  // const registerEmployee = await prisma.user.create({
+  //   data: {
+  //     username: usernameEmployee,
+  //     email: "fiki@example.com",
+  //     password: bcrypt.hashSync("password", 10),
+  //     role: "EMPLOYEE",
+  //   },
+  // });
   const usernameAdmin = "Admin";
   const registerAdmin = await prisma.user.create({
     data: {
