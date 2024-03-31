@@ -46,8 +46,6 @@ export default async function handler(req, res) {
     schedules = await prisma.schedule.findMany({
       include: {
         Employee: true,
-        Day: true,
-        WorkTime: true,
       },
     });
   } catch (error) {

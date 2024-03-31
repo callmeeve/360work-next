@@ -5,17 +5,11 @@ const CreateScheduleModal = ({ isOpen, onClose }) => {
   const [employees, setEmployees] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [employeeId, setEmployeeId] = useState("");
-  const [days, setDays] = useState([]);
-  const [workTimes, setWorkTimes] = useState([{ startTime: "", endTime: "" }]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const handleTimeChange = (index, field, value) => {
-    const newWorkTimes = [...workTimes];
-    newWorkTimes[index][field] = value;
-    setWorkTimes(newWorkTimes);
-  };
 
   const getEmployees = async () => {
     setLoading(true);
@@ -42,21 +36,21 @@ const CreateScheduleModal = ({ isOpen, onClose }) => {
       const res = await api.post("/api/manager/schedule/create", {
         startDate,
         endDate,
-        days,
+        startTime,
+        endTime,
         employeeId,
-        workTimes,
       });
 
       console.log(res.status);
 
       if (res.status === 201) {
         console.log("Schedule added successfully");
-        
+
         setStartDate("");
         setEndDate("");
+        setStartTime("");
+        setEndTime("");
         setEmployeeId("");
-        setDays([]);
-        setWorkTimes([{ startTime: "", endTime: "" }]);
 
         alert("Schedule added successfully");
         window.location.reload();
@@ -67,7 +61,6 @@ const CreateScheduleModal = ({ isOpen, onClose }) => {
       setLoading(false);
     }
   };
-        
 
   if (!isOpen) return null;
 
@@ -133,68 +126,39 @@ const CreateScheduleModal = ({ isOpen, onClose }) => {
                 />
               </div>
             </div>
-            <div className="mb-5">
-              <label className="block mb-2 text-sm font-medium text-gray-800">
-                Days
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  "Monday",
-                  "Tuesday",
-                  "Wednesday",
-                  "Thursday",
-                  "Friday",
-                  "Saturday",
-                  "Sunday",
-                ].map((day) => (
-                  <label key={day} className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      value={day}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setDays([...days, e.target.value.toUpperCase()]);
-                        } else {
-                          setDays(
-                            days.filter(
-                              (d) => d !== e.target.value.toUpperCase()
-                            )
-                          );
-                        }
-                      }}
-                      className="text-blue-500"
-                    />
-                    {day}
-                  </label>
-                ))}
+            <div className="mb-5 flex gap-4">
+              <div>
+                <label
+                  htmlFor="startTime"
+                  className="block mb-2 text-sm font-medium text-gray-800"
+                >
+                  Start Time
+                </label>
+                <input
+                  type="time"
+                  id="startTime"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  required
+                />
               </div>
-            </div>
-            <div className="mb-5">
-              <label className="block mb-2 text-sm font-medium text-gray-800">
-                Work Time
-              </label>
-              {workTimes.map((workTime, index) => (
-                <div className="flex" key={index}>
-                  <input
-                    type="time"
-                    value={workTime.startTime}
-                    onChange={(e) =>
-                      handleTimeChange(index, "startTime", e.target.value)
-                    }
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mr-2"
-                    required
-                  />
-                  <input
-                    type="time"
-                    value={workTime.endTime}
-                    onChange={(e) =>
-                      handleTimeChange(index, "endTime", e.target.value)
-                    }
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                    required
-                  />
-                </div>
-              ))}
+              <div>
+                <label
+                  htmlFor="endTime"
+                  className="block mb-2 text-sm font-medium text-gray-800"
+                >
+                  End Time
+                </label>
+                <input
+                  type="time"
+                  id="endTime"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                  required
+                />
+              </div>
             </div>
             {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
             <div className="flex justify-end gap-2">

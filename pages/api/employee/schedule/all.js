@@ -22,39 +22,33 @@ export default async function handler(req, res) {
     return res.status(403).json({ message: "You are not authorized" });
   }
 
-    let employee;
-    try {
-        employee = await prisma.employee.findUnique({
-            where: {
-                userId: decoded.id,
-            },
-            include: {
-                Manager: true,
-            },
-        });
-    }
-    catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Error fetching employee" });
-    }
-
-    if (!employee) {
-        return res.status(404).json({ message: "Employee not found" });
-    }
-
-    const schedules = await prisma.schedule.findMany({
-        where: {
-            employeeId: employee.id,
-        },
-        include: {
-            WorkTime: true,
-            Day: true,
-        },
-        orderBy: {
-            startDate: "desc",
-        },
+  let employee;
+  try {
+    employee = await prisma.employee.findUnique({
+      where: {
+        userId: decoded.id,
+      },
+      include: {
+        Manager: true,
+      },
     });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error fetching employee" });
+  }
 
-  
+  if (!employee) {
+    return res.status(404).json({ message: "Employee not found" });
+  }
+
+  const schedules = await prisma.schedule.findMany({
+    where: {
+      employeeId: employee.id,
+    },
+    orderBy: {
+      startDate: "asc",
+    },
+  });
+
   return res.status(200).json(schedules);
 }

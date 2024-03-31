@@ -41,89 +41,91 @@ export default async function handler(req, res) {
     return res.status(404).json({ message: "Employee not found" });
   }
 
-  const { image, date, clockIn, clockOut } = req.body;
+  const { image, date, checkIn, checkOut } = req.body;
 
-  // Check if the employee has a schedule for the date
-  let schedule;
-  try {
-    schedule = await prisma.schedule.findFirst({
-      where: {
-        employeeId: employee.id,
-        startDate: { lte: new Date(date) },
-        endDate: { gte: new Date(date) },
-      },
-      include: {
-        WorkTime: true,
-      },
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Error fetching schedule" });
-  }
+  //Get today's date
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-  if (!schedule) {
+  // Check if the date is not today
+  if (new Date(date).getTime() !== today.getTime()) {
     return res
-      .status(404)
-      .json({
-        message: "No schedule found for the employee on the given date",
-      });
+      .status(400)
+      .json({ message: "Attendance can only be made for today" });
   }
 
-  // Check if clockIn time is within the work time
-  const workTime = schedule.WorkTime[0]; // Assuming there is only one work time per schedule
+  // Determine the attendance status based on checkIn
   let status;
-  if (!clockIn) {
+  if (!checkIn) {
     status = "ABSENT";
-  } else if (new Date(clockIn) < workTime.startTime) {
-    status = "PRESENT";
-  } else if (new Date(clockIn) === workTime.startTime) {
-    status = "PRESENT";
-  } else {
+  } else if (new Date(checkIn) < schedule.startTime) {
+    return res.status(400).json({
+      message:
+        "Check-in time cannot be earlier than the start time in the schedule",
+    });
+  } else if (new Date(checkIn) > schedule.startTime) {
     status = "LATE";
+  } else {
+    status = "PRESENT";
   }
 
-  // Create the attendance
+  // Check if the employee has already checked in for the date
   let attendance;
   try {
-    attendance = await prisma.attendance.create({
-      data: {
-        image: image,
-        date: new Date(date),
-        clockIn: new Date(clockIn),
-        status: status,
+    attendance = await prisma.attendance.findFirst({
+      where: {
         employeeId: employee.id,
+        date: new Date(date),
       },
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Error creating attendance" });
+    return res.status(500).json({ message: "Error fetching attendance" });
   }
 
-  if (clockOut) {
-    // Check if clockOut time is within the work time
-    if (new Date(clockOut) < workTime.endTime) {
-      status = "LEAVE EARLY";
-    } else if (new Date(clockOut) === workTime.endTime) {
-      status = "LEAVE";
-    } else {
-      status = "OVERTIME";
-    }
-
-    // Update the attendance
+  // If the employee has not checked in yet, create a new attendance entry
+  if (!attendance) {
     try {
-      attendance = await prisma.attendance.update({
-        where: {
-          id: attendance.id,
-        },
+      await prisma.attendance.create({
         data: {
-          clockOut: new Date(clockOut),
-          status: status,
+          image,
+          date: new Date(date),
+          checkIn: checkIn ? new Date(checkIn) : null,
+          status, // use the determined status
+          employeeId: employee.id,
         },
       });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ message: "Error updating attendance" });
+      return res.status(500).json({ message: "Error creating attendance" });
+    }
+  } else {
+    // If the employee has already checked in, update the attendance entry with checkOut
+    if (checkOut) {
+      if (new Date(checkOut) > schedule.endTime) {
+        status = "OVERTIME";
+      } else if (new Date(checkOut) < schedule.endTime) {
+        status = "LEAVE_EARLY";
+      } else {
+        status = "LEAVE";
+      }
+
+      try {
+        await prisma.attendance.update({
+          where: {
+            id: attendance.id,
+          },
+          data: {
+            checkOut: new Date(checkOut),
+            status, // update the status if necessary
+          },
+        });
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Error updating attendance" });
+      }
     }
   }
-  return res.status(201).json(attendance);
+
+  return res.status(201).json({ message: "Attendance created or updated" });
 }

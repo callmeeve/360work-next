@@ -85,20 +85,6 @@ const ManagerSchedulePage = () => {
             <div className="-m-2 overflow-x-auto">
               <div className="p-4 min-w-full inline-block align-middle">
                 <div className="border overflow-hidden">
-                  {loading && (
-                    <div className="flex items-center justify-center h-32">
-                      <p className="text-sm font-medium text-gray-500">
-                        Loading...
-                      </p>
-                    </div>
-                  )}
-                  {error && (
-                    <div className="flex items-center justify-center h-32">
-                      <p className="text-sm font-medium text-red-500">
-                        {error.message}
-                      </p>
-                    </div>
-                  )}
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
@@ -144,7 +130,7 @@ const ManagerSchedulePage = () => {
                       {displayedSchedules.map((schedule, idx) => (
                         <tr key={idx}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            {schedule.Employee.name}
+                            {/* {schedule.Employee.User.username} */}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             {new Date(schedule.startDate).toLocaleDateString()}
@@ -152,24 +138,12 @@ const ManagerSchedulePage = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             {new Date(schedule.endDate).toLocaleDateString()}
                           </td>
-                          {schedule.WorkTime.map((workTime, index) => (
-                            <Fragment key={index}>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                {isNaN(Date.parse(workTime.startTime))
-                                  ? "Invalid date"
-                                  : new Date(
-                                      workTime.startTime
-                                    ).toLocaleTimeString()}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                {isNaN(Date.parse(workTime.endTime))
-                                  ? "Invalid date"
-                                  : new Date(
-                                      workTime.endTime
-                                    ).toLocaleTimeString()}
-                              </td>
-                            </Fragment>
-                          ))}
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            {new Date(schedule.startTime).toLocaleTimeString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            {new Date(schedule.endTime).toLocaleTimeString()}
+                          </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <button
                               type="button"

@@ -41,9 +41,9 @@ export default async function handler(req, res) {
     return res.status(404).json({ message: "Manager not found" });
   }
 
-  const { startDate, endDate, days, employeeId, workTimes } = req.body;
+  const { startDate, endDate, startTime, endTime, employeeId } = req.body;
 
-  if (!startDate || !endDate || !days || !employeeId || !workTimes) {
+  if (!startDate || !endDate || !startTime || !endTime || !employeeId) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
@@ -64,25 +64,18 @@ export default async function handler(req, res) {
   }
 
   try {
+    const startTimeDate = new Date(`1970-01-01T${startTime}`);
+    const endTimeDate = new Date(`1970-01-01T${endTime}`);
     const schedule = await prisma.schedule.create({
       data: {
         startDate: new Date(startDate),
         endDate: new Date(endDate),
+        startTime: startTimeDate,
+        endTime: endTimeDate,
         Employee: {
           connect: {
             id: parseInt(employeeId),
           },
-        },
-        Day: {
-          create: days.map((day) => ({
-            day: day,
-          })),
-        },
-        WorkTime: {
-          create: workTimes.map((workTime) => ({
-            startTime: new Date(`${startDate} ${workTime.startTime}`),
-            endTime: new Date(`${startDate} ${workTime.endTime}`),
-          })),
         },
       },
     });

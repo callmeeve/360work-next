@@ -37,7 +37,6 @@ enum AttendanceStatus {
   OVER_TIME
   LEAVE
   LEAVE_EARLY
-  SICK
 }
 
 enum TaskStatus {
@@ -113,10 +112,10 @@ model Employee {
 
 model Attendance {
   id         Int              @id @default(autoincrement())
-  image      String
+  image      String?
   date       DateTime
-  clockIn    DateTime
-  clockOut   DateTime?
+  checkIn    DateTime
+  checkOut   DateTime?
   status     AttendanceStatus
   employeeId Int
   createdAt  DateTime         @default(now())
@@ -128,29 +127,12 @@ model Schedule {
   id         Int        @id @default(autoincrement())
   startDate  DateTime
   endDate    DateTime
+  startTime  DateTime
+  endTime    DateTime
   employeeId Int
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   Employee   Employee   @relation(fields: [employeeId], references: [id])
-  WorkTime   WorkTime[]
-  Day        Day[]
-}
-
-model Day {
-  id         Int      @id @default(autoincrement())
-  day        Days
-  scheduleId Int
-  Schedule   Schedule @relation(fields: [scheduleId], references: [id])
-}
-
-model WorkTime {
-  id         Int      @id @default(autoincrement())
-  startTime  DateTime
-  endTime    DateTime
-  scheduleId Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  Schedule   Schedule @relation(fields: [scheduleId], references: [id])
 }
 
 model Company {
