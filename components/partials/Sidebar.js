@@ -1,54 +1,50 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Navigation from "../data/helper/Navigation";
 import Image from "next/image";
 
-function Sidebar({ role, isMobile }) {
+const Sidebar = forwardRef(({ showNav, role }, ref) => {
   const router = useRouter();
   const navigation = Navigation.find((nav) => nav.role === role);
   return (
-    <div className={`w-64 bg-white ${isMobile ? 'block' : 'hidden'}`}>
-      {navigation ? (
-        <div className="flex-grow">
-          <div className="w-full mx-auto mb-4 flex items-center justify-center border-b border-r">
-            <Image
-              src="/next.svg"
-              className="w-20 h-20"
-              width={24}
-              height={24}
-              alt="Next.js"
-              priority
-            />
-          </div>
-          <div className="p-4">
-            <ul className="flex flex-col gap-y-4">
-              {navigation.menu.map(({ name, href, icon: Icon }) => (
-                <Link key={href} href={href}>
-                  <li
-                    className={`flex items-center px-4 py-2.5 rounded font-medium ${
-                      router.pathname === href
-                        ? "bg-blue-500 text-white"
-                        : "text-gray-800 hover:bg-blue-500 hover:text-white"
-                    }`}
-                  >
-                    <Icon className="w-6 h-6 mr-2" />
-                    <span className="text-sm">
-                      {name}
-                    </span>
-                  </li>
-                </Link>
-              ))}
-            </ul>
-          </div>
-        </div>
-      ) : (
-        <div className="p-4 flex-grow">
-          <p className="text-center">No menu available</p>
-        </div>
-      )}
+    <div ref={ref} className="fixed w-56 h-full bg-white shadow-sm">
+      <div className="flex justify-center mt-6 mb-14">
+        <picture>
+          <Image
+            src="/next.svg"
+            className="w-28 h-auto"
+            width={24}
+            height={24}
+            alt="Next.js"
+            priority
+          />
+        </picture>
+      </div>
+
+      <div className="flex flex-col">
+        {navigation.menu.map(({ name, href, icon: Icon }) => (
+          <Link key={href} href={href}>
+            <div
+              className={`pl-6 py-3 mx-5 rounded text-center font-medium text-sm cursor-pointer mb-3 flex items-center transition-colors ${
+                router.pathname == href
+                  ? "bg-blue-100 text-blue-500"
+                  : "text-gray-400 hover:bg-blue-100 hover:text-blue-500"
+              }`}
+            >
+              <div className="mr-2">
+                <Icon className="h-5 w-5" />
+              </div>
+              <div>
+                <p>{name}</p>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
     </div>
   );
-}
+});
 
+Sidebar.displayName = "Sidebar";
 export default Sidebar;
