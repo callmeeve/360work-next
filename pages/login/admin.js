@@ -48,6 +48,7 @@ function LoginAdmin() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             className="w-full p-2 border rounded-md"
+            required
           />
         </div>
         <div>
@@ -60,6 +61,7 @@ function LoginAdmin() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             className="w-full p-2 border rounded-md"
+            required
           />
         </div>
         <button

@@ -52,7 +52,9 @@ CREATE TABLE `Attendance` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `image` VARCHAR(191) NOT NULL,
     `date` DATETIME(3) NOT NULL,
-    `status` ENUM('PRESENT', 'ABSENT', 'LATE', 'OVER_TIME', 'LEAVE', 'SICK') NOT NULL,
+    `clockIn` DATETIME(3) NOT NULL,
+    `clockOut` DATETIME(3) NULL,
+    `status` ENUM('PRESENT', 'ABSENT', 'LATE', 'OVER_TIME', 'LEAVE', 'LEAVE_EARLY', 'SICK') NOT NULL,
     `employeeId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
@@ -146,6 +148,19 @@ CREATE TABLE `TaskReport` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `Notification` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(191) NOT NULL,
+    `message` VARCHAR(191) NOT NULL,
+    `read` BOOLEAN NOT NULL DEFAULT false,
+    `userId` INTEGER NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `Manager` ADD CONSTRAINT `Manager_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -187,3 +202,6 @@ ALTER TABLE `Task` ADD CONSTRAINT `Task_managerId_fkey` FOREIGN KEY (`managerId`
 
 -- AddForeignKey
 ALTER TABLE `TaskReport` ADD CONSTRAINT `TaskReport_taskId_fkey` FOREIGN KEY (`taskId`) REFERENCES `Task`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Notification` ADD CONSTRAINT `Notification_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

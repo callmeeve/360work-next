@@ -4,17 +4,17 @@ import { useRouter } from "next/router";
 import Navigation from "../data/helper/Navigation";
 import Image from "next/image";
 
-function Sidebar({ role }) {
+function Sidebar({ role, isMobile }) {
   const router = useRouter();
   const navigation = Navigation.find((nav) => nav.role === role);
   return (
-    <div className="w-64 bg-white h-screen">
+    <div className={`w-64 bg-white ${isMobile ? 'block' : 'hidden'}`}>
       {navigation ? (
         <div className="flex-grow">
           <div className="w-full mx-auto mb-4 flex items-center justify-center border-b border-r">
             <Image
               src="/next.svg"
-              className="w-20 h-[4.72rem]"
+              className="w-20 h-20"
               width={24}
               height={24}
               alt="Next.js"

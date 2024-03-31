@@ -36,6 +36,7 @@ enum AttendanceStatus {
   LATE
   OVER_TIME
   LEAVE
+  LEAVE_EARLY
   SICK
 }
 
@@ -115,7 +116,7 @@ model Attendance {
   image      String
   date       DateTime
   clockIn    DateTime
-  clockOut   DateTime
+  clockOut   DateTime?
   status     AttendanceStatus
   employeeId Int
   createdAt  DateTime         @default(now())

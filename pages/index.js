@@ -1,12 +1,23 @@
-import RoleBasedLayout from "@/components/data/helper/RoleBasedLayout";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import LoginForm from "@/components/partials/LoginForm";
 
+function Home() {
+  const router = useRouter();
 
-const AdminHome = () => {
-  return (
-    <div>
-      <h1>Admin Home</h1>
-    </div>
-  );
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (user) {
+      if (user.role === "EMPLOYEE") {
+        router.push("/employee");
+      } else if (user.role === "MANAGER") {
+        router.push("/manager");
+      }
+    }
+  }, []);
+
+  return <LoginForm />;
 }
- 
-export default RoleBasedLayout(AdminHome);
+
+export default Home;

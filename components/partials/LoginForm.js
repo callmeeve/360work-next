@@ -52,6 +52,7 @@ function LoginForm() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             className="w-full p-2 border rounded-md"
+            required
           />
         </div>
         <div>
@@ -64,6 +65,7 @@ function LoginForm() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             className="w-full p-2 border rounded-md"
+            required
           />
         </div>
         <div>
@@ -75,6 +77,7 @@ function LoginForm() {
             value={role}
             onChange={(event) => setRole(event.target.value)}
             className="w-full p-2 border rounded-md"
+            required
           >
             <option value="">Select Role</option>
             <option value="EMPLOYEE">Employee</option>
@@ -92,6 +95,7 @@ function LoginForm() {
               value={secretKey}
               onChange={(event) => setSecretKey(event.target.value)}
               className="w-full p-2 border rounded-md"
+              required
             />
           </div>
         )}

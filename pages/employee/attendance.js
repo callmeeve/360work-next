@@ -1,59 +1,136 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import RoleBasedLayout from "@/components/data/helper/RoleBasedLayout";
-import { HiCamera, HiOutlineCamera } from "react-icons/hi2";
+import { HiOutlineCamera } from "react-icons/hi2";
+import api from "@/components/data/utils/api";
+import { toLocalIsoString } from "@/components/data/utils/function";
 
 const EmployeeAttendancePage = () => {
-  const data = [
-    { date: "25", day: "Monday", time: "13:16:17" },
-    { date: "26", day: "Tuesday", time: "13:16:17" },
-    { date: "27", day: "Wednesday", time: "13:16:17" },
-    { date: "28", day: "Thursday", time: "13:16:17" },
-    { date: "29", day: "Friday", time: "13:16:17" },
-    { date: "30", day: "Saturday", time: "13:16:17" },
-    { date: "31", day: "Sunday", time: "13:16:17" },
-  ];
+  const [schedules, setSchedules] = useState([]);
+  const [currentDate, setCurrentDate] = useState(
+    new Date().toISOString().split("T")[0]
+  ); // Add currentDate state
+  const [image, setImage] = useState(null);
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const getSchedules = async () => {
+    try {
+      const response = await api.get("/api/employee/schedule/all");
+      setSchedules(response.data);
+    } catch (error) {
+      console.error("Error fetching schedule", error);
+    }
+  };
+
+  useEffect(() => {
+    getSchedules();
+  }, []);
+
+  const handleImageChange = (event) => {
+    setImage(event.target.files[0]);
+  };
+
+  const handleDateChange = (event) => {
+    setDate(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("image", image);
+      formData.append("date", date);
+
+      const response = await api.post(
+        "/api/employee/attendance/create",
+        formData
+      );
+
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error submitting attendance", error);
+      setError(error.response.data.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="flex-grow">
-        <h1 className="text-3xl font-semibold">Attendance</h1>
-        <p className="text-gray-500">Welcome to the employee attendance page</p>
-        <div className="mt-8 border rounded shadow-sm p-4">
-          <div className="my-2">
-            <div className="grid xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {data.map((item, index) => (
-                <div
-                  key={index}
-                  className="w-full p-4 border rounded shadow-sm"
-                >
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                    <div className="w-10 h-10 bg-blue-100 rounded flex items-center justify-center">
-                      <span className="text-blue-500 text-lg">{item.date}</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <p className="text-sm font-semibold">Mar 2024</p>
-                      <p className="text-sm text-gray-500">{item.day}</p>
-                    </div>
-                    <div className="border-r border-gray-200 h-12 hidden sm:block"></div>
-
-                    <p className="text-sm text-gray-500 text-start sm:text-end">
-                      {item.time}
-                    </p>
-
-                    <div className="flex flex-col items-start sm:items-center justify-center">
-                      <label className="w-10 h-10 bg-blue-100 rounded flex items-center justify-center cursor-pointer">
-                        <HiOutlineCamera className="text-blue-500 text-lg" />
-                        <input type="file" className="hidden" />
-                      </label>
-                      <p className="text-xs text-gray-500 text-center mt-2">
-                        Ambil Foto
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+    <div className="flex flex-col h-screen p-5">
+      <h1 className="text-3xl font-semibold mb-5">Attendance</h1>
+      <div className="flex-grow mt-5">
+        <div className="bg-white p-4 rounded border shadow-sm">
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label
+                htmlFor="image"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Upload Image
+              </label>
+              <div className="mt-1">
+                <input
+                  id="image"
+                  name="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+              </div>
             </div>
-          </div>
+            <div className="flex flex-wrap justify-center">
+              {schedules.map((schedule) => {
+                const start = new Date(schedule.startDate);
+                const end = new Date(schedule.endDate);
+                const dates = [];
+                for (
+                  let dt = new Date(start);
+                  dt <= end;
+                  dt.setDate(dt.getDate() + 1)
+                ) {
+                  dates.push(new Date(dt));
+                }
+                return dates.map((date, index) => {
+                  const dateStr = toLocalIsoString(date);
+                  const todayStr = toLocalIsoString(new Date());
+                  const isToday = todayStr === dateStr;
+                  const isFuture = todayStr < dateStr;
+                  return (
+                    <button
+                      key={index}
+                      value={dateStr}
+                      onClick={handleDateChange}
+                      disabled={isFuture}
+                      className={`flex flex-col items-center justify-center m-2 p-4 bg-white border rounded shadow-sm ${
+                        isFuture
+                          ? "cursor-not-allowed opacity-50"
+                          : "cursor-pointer"
+                      }`}
+                    >
+                      <span className="text-lg font-semibold">
+                        {date.toLocaleDateString()}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        {isToday ? "Today" : isFuture ? "Future" : "Past"}
+                      </span>
+                    </button>
+                  );
+                });
+              })}
+            </div>
+            <div className="mt-4">
+              <button
+                type="submit"
+                className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
