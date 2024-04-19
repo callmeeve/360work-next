@@ -8,9 +8,9 @@ const Sidebar = forwardRef(({ showNav, role }, ref) => {
   const router = useRouter();
   const navigation = Navigation.find((nav) => nav.role === role);
   return (
-    <div ref={ref} className="fixed w-56 h-full bg-white shadow-sm">
+    <div ref={ref} className="w-64 bg-gray-50">
       <div className="flex justify-center mt-6 mb-14">
-        <picture>
+        {/* <picture>
           <Image
             src="/next.svg"
             className="w-28 h-auto"
@@ -19,7 +19,10 @@ const Sidebar = forwardRef(({ showNav, role }, ref) => {
             alt="Next.js"
             priority
           />
-        </picture>
+        </picture> */}
+        <h1 className="text-2xl font-bold text-gray-800">
+          360WORK.ID
+        </h1>
       </div>
 
       <div className="flex flex-col">
@@ -28,8 +31,8 @@ const Sidebar = forwardRef(({ showNav, role }, ref) => {
             <div
               className={`pl-6 py-3 mx-5 rounded text-center font-medium text-sm cursor-pointer mb-3 flex items-center transition-colors ${
                 router.pathname == href
-                  ? "bg-blue-100 text-blue-500"
-                  : "text-gray-400 hover:bg-blue-100 hover:text-blue-500"
+                  ? "bg-primary text-white"
+                  : "text-gray-800 hover:bg-primary hover:text-white"
               }`}
             >
               <div className="mr-2">

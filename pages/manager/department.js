@@ -62,8 +62,8 @@ const ManagerDepartmentPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="flex-grow my-4">
+    <div className="flex flex-col">
+      <div className="flex-grow my-8">
         <div className="p-4 bg-white border rounded-lg shadow-sm">
           <div className="flex flex-col">
             <div className="flex items-center p-2">

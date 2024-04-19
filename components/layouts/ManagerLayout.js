@@ -60,7 +60,7 @@ function ManagerLayout({ children }) {
   }
 
   return (
-    <>
+    <div className="w-full min-h-screen flex">
       <Header
         showNav={showNav}
         setShowNav={setShowNav}
@@ -80,13 +80,11 @@ function ManagerLayout({ children }) {
         <Sidebar showNav={showNav} role={users.role} />
       </Transition>
       <main
-        className={`pt-16 transition-all duration-[400ms] ${
-          showNav && !isMobile ? "pl-56" : ""
-        }`}
+        className="flex-1 transition-all duration-[400ms]"
       >
-        <div className="px-4 md:px-16">{children}</div>
+        <div className="pt-16 px-4 md:px-16">{children}</div>
       </main>
-    </>
+    </div>
   );
 }
 

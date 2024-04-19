@@ -2,35 +2,41 @@ import React, { useState, useEffect } from "react";
 import EmployeeLayout from "@/components/layouts/EmployeeLayout";
 import ManagerLayout from "@/components/layouts/ManagerLayout";
 import AdminLayout from "@/components/layouts/AdminLayout";
-import Unauthorized from "@/components/partials/Unauthorized";
+import { useRouter } from "next/router";
 
 function RoleBasedLayout(WrappedComponent) {
   return function Layout(props) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const router = useRouter();
+
     useEffect(() => {
       if (typeof window !== "undefined") {
-        const storedUser = JSON.parse(localStorage.getItem("user"));
-        setUser(storedUser);
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
         setLoading(false);
       }
     }, []);
+
+    useEffect(() => {
+      if (!loading && user && !["EMPLOYEE", "MANAGER", "ADMIN"].includes(user.role)) {
+        router.push("/");
+      }
+    }, [loading, user]);
 
     if (loading) {
       return <div>Loading...</div>; // Or your loading spinner
     }
 
-    const role = user ? user.role : null;
-
-    if (role === "EMPLOYEE") {
+    if (user.role === "EMPLOYEE") {
       return <EmployeeLayout>{<WrappedComponent {...props} />}</EmployeeLayout>;
-    } else if (role === "MANAGER") {
+    } else if (user.role === "MANAGER") {
       return <ManagerLayout>{<WrappedComponent {...props} />}</ManagerLayout>;
-    } else if (role === "ADMIN") {
+    } else if (user.role === "ADMIN") {
       return <AdminLayout>{<WrappedComponent {...props} />}</AdminLayout>;
-    } else {
-      return <Unauthorized />;
     }
   };
 }

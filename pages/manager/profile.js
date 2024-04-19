@@ -23,7 +23,7 @@ const ManagerProfilePage = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col">
       <div className="flex-grow">
         <div className="p-8 bg-white border rounded-lg shadow-sm">
           <h1 className="text-2xl font-semibold text-gray-800">

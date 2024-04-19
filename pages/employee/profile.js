@@ -7,7 +7,7 @@ const EmployeeProfilePage = () => {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [birth_date, setBirthDate] = useState("");
-  const [gender, setGender] = useState("MALE");
+  const [gender, setGender] = useState("PRIA");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [isDataComplete, setIsDataComplete] = useState(false);
@@ -42,7 +42,7 @@ const EmployeeProfilePage = () => {
       setName("");
       setAddress("");
       setBirthDate("");
-      setGender("MALE");
+      setGender("PRIA");
       setPhone("");
 
       getEmployees();
@@ -70,13 +70,13 @@ const EmployeeProfilePage = () => {
   }, [employee]);
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="flex-grow">
+    <div className="flex flex-col">
+      <div className="my-8">
         <div className="p-4 bg-white border rounded-lg shadow-sm">
           {isDataComplete ? (
             <div
               key={employee.id || index}
-              className="flex flex-col justify-start bg-white shadow-md rounded-lg p-6 m-4"
+              className="flex flex-col justify-start p-6 m-4"
             >
               <h1 className="text-3xl font-semibold mb-4">Employee Profile</h1>
               <div className="flex items-center gap-4 mb-2">
@@ -144,8 +144,8 @@ const EmployeeProfilePage = () => {
                     onChange={(e) => setGender(e.target.value)}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   >
-                    <option value="MALE">MALE</option>
-                    <option value="FEMALE">FEMALE</option>
+                    <option value="PRIA">PRIA</option>
+                    <option value="WANITA">WANITA</option>
                   </select>
                 </div>
                 <div className="mb-4">

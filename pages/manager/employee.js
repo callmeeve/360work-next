@@ -62,8 +62,8 @@ const ManagerEmployeePage = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="flex-grow my-4">
+    <div className="flex flex-col">
+      <div className="flex-grow my-8">
         <div className="p-4 bg-white border rounded-lg shadow-sm">
           <div className="flex flex-col">
             <div className="flex items-center justify-between p-2">
@@ -91,20 +91,6 @@ const ManagerEmployeePage = () => {
             <div className="-m-2 overflow-x-auto">
               <div className="p-4 min-w-full inline-block align-middle">
                 <div className="border overflow-hidden">
-                  {loading && (
-                    <div className="flex items-center justify-center h-32">
-                      <p className="text-sm font-medium text-gray-500">
-                        Loading...
-                      </p>
-                    </div>
-                  )}
-                  {error && (
-                    <div className="flex items-center justify-center h-32">
-                      <p className="text-sm font-medium text-red-500">
-                        {error.message}
-                      </p>
-                    </div>
-                  )}
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
                       <tr>
@@ -141,6 +127,20 @@ const ManagerEmployeePage = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
+                      {loading && (
+                        <tr>
+                          <td colSpan="5" className="text-center py-4">
+                            Loading...
+                          </td>
+                        </tr>
+                      )}
+                      {error && (
+                        <tr>
+                          <td colSpan="5" className="text-center text-red-500 py-4">
+                            {error.message}
+                          </td>
+                        </tr>
+                      )}
                       {displayedEmployees.map((employee, idx) => (
                         <tr key={idx}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">

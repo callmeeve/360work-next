@@ -14,6 +14,8 @@ function Home() {
       } else if (user.role === "MANAGER") {
         router.push("/manager");
       }
+    } else {
+      router.push("/");
     }
   }, []);
 

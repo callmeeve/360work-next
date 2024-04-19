@@ -9,6 +9,7 @@ import {
   HiCreditCard,
   HiOutlineBell,
   HiPencil,
+  HiUser,
 } from "react-icons/hi2";
 import { IoLogOutOutline } from "react-icons/io5";
 
@@ -139,30 +140,30 @@ export default function Header({ showNav, setShowNav, users, handleLogout }) {
               <div className="p-1">
                 <Menu.Item>
                   <Link
-                    href="#"
-                    className="flex hover:bg-orange-500 hover:text-white text-gray-700 rounded p-2 text-sm group transition-colors items-center"
+                    href={`/${users.role.toLowerCase()}/profile`}
+                    className="flex hover:bg-primary hover:text-white text-gray-800 rounded p-2 text-sm group transition-colors items-center"
                   >
-                    <HiPencil className="h-4 w-4 mr-2" />
-                    Edit
+                    <HiUser className="h-4 w-4 mr-2" />
+                    Profile
                   </Link>
                 </Menu.Item>
                 <Menu.Item>
                   <Link
                     href="#"
-                    className="flex hover:bg-orange-500 hover:text-white text-gray-700 rounded p-2 text-sm group transition-colors items-center"
+                    className="flex hover:bg-primary hover:text-white text-gray-800 rounded p-2 text-sm group transition-colors items-center"
                   >
                     <HiCreditCard className="h-4 w-4 mr-2" />
                     Billing
                   </Link>
                 </Menu.Item>
                 <Menu.Item>
-                    <button
-                        onClick={handleLogout}
-                        className="w-full flex hover:bg-orange-500 hover:text-white text-gray-700 rounded p-2 text-sm group transition-colors items-center"
-                    >
-                        <IoLogOutOutline className="h-4 w-4 mr-2" />
-                        Logout
-                    </button>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex hover:bg-primary hover:text-white text-gray-800 rounded p-2 text-sm group transition-colors items-center"
+                  >
+                    <IoLogOutOutline className="h-4 w-4 mr-2" />
+                    Logout
+                  </button>
                 </Menu.Item>
               </div>
             </Menu.Items>
