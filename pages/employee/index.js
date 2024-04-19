@@ -1,6 +1,6 @@
 import RoleBasedLayout from "@/components/data/helper/RoleBasedLayout";
 
-const EmployeeDashboard = () => {
+const EmployeeDashboard = (props) => {
   return (
     <div className="flex flex-col">
       <div className="my-8">

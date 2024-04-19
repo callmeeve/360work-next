@@ -8,6 +8,7 @@ function RoleBasedLayout(WrappedComponent) {
   return function Layout(props) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [Layout, setLayout] = useState(null);
 
     const router = useRouter();
 
@@ -22,22 +23,33 @@ function RoleBasedLayout(WrappedComponent) {
     }, []);
 
     useEffect(() => {
-      if (!loading && user && !["EMPLOYEE", "MANAGER", "ADMIN"].includes(user.role)) {
-        router.push("/");
+      if (!loading && user) {
+        if (!["EMPLOYEE", "MANAGER", "ADMIN"].includes(user.role)) {
+          localStorage.removeItem("user");
+          router.push("/");
+        } else {
+          const layoutMap = {
+            EMPLOYEE: EmployeeLayout,
+            MANAGER: ManagerLayout,
+            ADMIN: AdminLayout,
+          };
+          setLayout(() => layoutMap[user.role]);
+        }
       }
     }, [loading, user]);
 
-    if (loading) {
-      return <div>Loading...</div>; // Or your loading spinner
+    if (loading || !Layout) {
+      return (
+        <div className="flex items-center justify-center h-screen">
+          <svg
+            className="animate-spin h-5 w-5 mr-3 ..."
+            viewBox="0 0 24 24"
+          ></svg>
+        </div>
+      );
     }
 
-    if (user.role === "EMPLOYEE") {
-      return <EmployeeLayout>{<WrappedComponent {...props} />}</EmployeeLayout>;
-    } else if (user.role === "MANAGER") {
-      return <ManagerLayout>{<WrappedComponent {...props} />}</ManagerLayout>;
-    } else if (user.role === "ADMIN") {
-      return <AdminLayout>{<WrappedComponent {...props} />}</AdminLayout>;
-    }
+    return <Layout>{<WrappedComponent {...props} />}</Layout>;
   };
 }
 

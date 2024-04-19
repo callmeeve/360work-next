@@ -158,39 +158,49 @@ const ManagerDashboard = () => {
             </div>
           </div>
           <div className="relative overflow-x-auto mt-8">
-            <table className="w-full text-sm text-left rtl:text-right text-gray-800 ">
-              <thead className="text-xs text-gray-800 uppercase bg-gray-50">
-                <tr>
-                  <th scope="col" className="px-6 py-3">Email</th>
-                  <th scope="col" className="px-6 py-3">Job Status</th>
-                  <th scope="col" className="px-6 py-3">Department</th>
-                  <th scope="col" className="px-6 py-3">Company</th>
-                  <th scope="col" className="px-6 py-3">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {employees.map((employee) => (
-                  <tr key={employee.id}>
-                    <td className="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
-                      {employee.User.email}
-                    </td>
-                    <td className="px-6 py-4">
-                      {employee.job_status}
-                    </td>
-                    <td className="px-6 py-4">
-                      {employee.Department.name}
-                    </td>
-                    <td className="px-6 py-4">
-                      {employee.Company.name}
-                    </td>
-                    <td className="px-6 py-4">
-                      <button className="text-primary mr-2">Edit</button>
-                      <button className="text-danger">Delete</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div className="min-w-full">
+              <div className="bg-white shadow-sm rounded-md border">
+                <table className="w-full text-sm text-left rtl:text-right text-gray-800 ">
+                  <thead className="text-xs text-gray-800 uppercase bg-gray-50">
+                    <tr>
+                      <th scope="col" className="px-6 py-3">
+                        Email
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Job Status
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Department
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Company
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {employees.map((employee) => (
+                      <tr key={employee.id}>
+                        <td className="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
+                          {employee.User.email}
+                        </td>
+                        <td className="px-6 py-4">{employee.job_status}</td>
+                        <td className="px-6 py-4">
+                          {employee.Department.name}
+                        </td>
+                        <td className="px-6 py-4">{employee.Company.name}</td>
+                        <td className="px-6 py-4">
+                          <button className="text-primary mr-2">Edit</button>
+                          <button className="text-danger">Delete</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>

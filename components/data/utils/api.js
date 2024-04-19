@@ -13,6 +13,9 @@ api.interceptors.request.use((config) => {
   // If the token is present, set it in the Authorization header
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    // If the token is not present, remove it from the Authorization header
+    delete config.headers.Authorization;
   }
 
   return config;

@@ -6,23 +6,25 @@ import { Transition } from "@headlessui/react";
 import Sidebar from "../partials/Sidebar";
 
 function ManagerLayout({ children }) {
-  const [users, setUsers] = useState(null);
+  const [user, setUser] = useState(null);
   const [showNav, setShowNav] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
 
   const checkUser = () => {
     const token = localStorage.getItem("token");
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!token) {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (!token || !storedUser || storedUser.role !== "MANAGER") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
       router.push("/");
-    } else if (user) {
-      setUsers(user);
+    } else {
+      setUser(storedUser);
     }
   };
 
   function handleResize() {
-    if (innerWidth <= 640) {
+    if (window.innerWidth <= 640) {
       setShowNav(false);
       setIsMobile(true);
     } else {
@@ -32,17 +34,14 @@ function ManagerLayout({ children }) {
   }
 
   useEffect(() => {
-    if (typeof window != undefined) {
-      addEventListener("resize", handleResize);
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", handleResize);
+      checkUser();
     }
 
     return () => {
-      removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", handleResize);
     };
-  }, []);
-
-  useEffect(() => {
-    checkUser();
   }, []);
 
   const handleLogout = () => {
@@ -51,7 +50,7 @@ function ManagerLayout({ children }) {
     router.push("/");
   };
 
-  if (!users) {
+  if (!user) {
     return (
       <div className="flex items-center justify-center h-screen">
         Loading...
@@ -59,12 +58,13 @@ function ManagerLayout({ children }) {
     );
   }
 
+
   return (
     <div className="w-full min-h-screen flex">
       <Header
         showNav={showNav}
         setShowNav={setShowNav}
-        users={users}
+        users={user}
         handleLogout={handleLogout}
       />
       <Transition
@@ -77,7 +77,7 @@ function ManagerLayout({ children }) {
         leaveFrom="translate-x-0"
         leaveTo="-translate-x-full"
       >
-        <Sidebar showNav={showNav} role={users.role} />
+        <Sidebar showNav={showNav} role={user.role} />
       </Transition>
       <main
         className="flex-1 transition-all duration-[400ms]"
