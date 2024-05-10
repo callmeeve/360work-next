@@ -40,7 +40,7 @@ export default async function handle(req, res) {
       data: {
         name: name,
         companyId: companyId,
-        Company: {
+        company: {
           connect: {
             id: manager.companyId,
           },

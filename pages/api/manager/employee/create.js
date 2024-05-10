@@ -28,7 +28,7 @@ export default async function handle(req, res) {
       userId: decoded.id,
     },
     include: {
-      Company: true,
+      company: true,
     },
   });
 
@@ -73,7 +73,7 @@ export default async function handle(req, res) {
     return res.status(404).json({ message: "Department not found" });
   }
 
-  if (department.companyId !== manager.Company.id) {
+  if (department.companyId !== manager.company.id) {
     return res.status(400).json({
       message: "Department does not belong to the same company as the manager",
     });
@@ -82,22 +82,22 @@ export default async function handle(req, res) {
   const newEmployee = await prisma.employee.create({
     data: {
       job_status: job_status,
-      User: {
+      user: {
         connect: {
           id: newUser.id,
         },
       },
-      Company: {
+      company: {
         connect: {
-          id: manager.Company.id,
+          id: manager.company.id,
         },
       },
-      Department: {
+      department: {
         connect: {
           id: parseInt(departmentId),
         },
       },
-      Manager: {
+      manager: {
         connect: {
           id: manager.id,
         },

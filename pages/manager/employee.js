@@ -144,16 +144,16 @@ const ManagerEmployeePage = () => {
                       {displayedEmployees.map((employee, idx) => (
                         <tr key={idx}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                            {employee.User.username}
+                            {employee.user.username}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {employee.User.email}
+                            {employee.user.email}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {employee.Company.name}
+                            {employee.company.name}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                            {employee.Department.name}
+                            {employee.department.name}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <button

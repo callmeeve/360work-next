@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         id: decoded.id,
       },
       include: {
-        Notification: {
+        notification: {
           orderBy: {
             createdAt: "desc",
           },

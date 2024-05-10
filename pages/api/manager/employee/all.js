@@ -29,10 +29,10 @@ export default async function handle(req, res) {
         managerId: decoded.id,
       },
       include: {
-        User: true,
-        Company: true,
-        Department: true,
-        Manager: true,
+        user: true,
+        company: true,
+        department: true,
+        manager: true,
       },
     });
   } catch (error) {

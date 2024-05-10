@@ -11,12 +11,14 @@ async function main() {
       email: "haikal@example.com",
       password: bcrypt.hashSync("password", 10),
       role: "MANAGER",
-      Manager: {
+      manager: {
         create: {
           secretKey: crypto.randomBytes(20).toString("hex"),
           name: username,
+          updatedAt: new Date(),
         },
       },
+      updatedAt: new Date(),
     },
   });
   // const usernameEmployee = "fiki";
@@ -35,6 +37,7 @@ async function main() {
       email: "admin@example.com",
       password: bcrypt.hashSync("admin_admin", 10),
       role: "ADMIN",
+      updatedAt: new Date(),
     },
   });
 }

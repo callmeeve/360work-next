@@ -1,4 +1,5 @@
 import { prisma } from "@/config/db";
+import manager from "@/pages/manager";
 import jwt from "jsonwebtoken";
 
 export default async function handle(req, res) {
@@ -26,7 +27,7 @@ export default async function handle(req, res) {
   try {
     companies = await prisma.company.findMany({
       where: {
-        Manager: {
+        manager: {
           some: {
             userId: decoded.id,
           },

@@ -184,13 +184,13 @@ const ManagerDashboard = () => {
                     {employees.map((employee) => (
                       <tr key={employee.id}>
                         <td className="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
-                          {employee.User.email}
+                          {employee.user.email}
                         </td>
                         <td className="px-6 py-4">{employee.job_status}</td>
                         <td className="px-6 py-4">
-                          {employee.Department.name}
+                          {employee.department.name}
                         </td>
-                        <td className="px-6 py-4">{employee.Company.name}</td>
+                        <td className="px-6 py-4">{employee.company.name}</td>
                         <td className="px-6 py-4">
                           <button className="text-primary mr-2">Edit</button>
                           <button className="text-danger">Delete</button>

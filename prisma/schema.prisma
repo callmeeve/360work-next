@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,24 +7,165 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  ADMIN
-  EMPLOYEE
-  MANAGER
+model attendance {
+  id         Int               @id @default(autoincrement())
+  image      String?
+  date       DateTime
+  status     attendance_status
+  employeeId Int
+  scheduleId Int
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  checkIn    DateTime?
+  checkOut   DateTime?
+  employee   employee          @relation(fields: [employeeId], references: [id], map: "Attendance_employeeId_fkey")
+  schedule   schedule          @relation(fields: [scheduleId], references: [id], map: "Attendance_scheduleId_fkey")
+
+  @@index([scheduleId], map: "Attendance_scheduleId_fkey")
+  @@index([employeeId], map: "Attendance_employeeId_fkey")
 }
 
-enum Gender {
-  PRIA
-  WANITA
+model company {
+  id         Int          @id @default(autoincrement())
+  email      String       @unique(map: "Company_email_key")
+  name       String
+  address    String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  department department[]
+  employee   employee[]
+  manager    manager[]
 }
 
-enum JobStatus {
-  CONTRACT
-  PERMANENT
-  PROJECT
+model department {
+  id        Int        @id @default(autoincrement())
+  name      String
+  companyId Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  company   company    @relation(fields: [companyId], references: [id], map: "Department_companyId_fkey")
+  employee  employee[]
+
+  @@index([companyId], map: "Department_companyId_fkey")
 }
 
-enum AttendanceStatus {
+model employee {
+  id           Int                 @id @default(autoincrement())
+  name         String?
+  address      String?
+  birth_date   DateTime?
+  gender       employee_gender?
+  job_status   employee_job_status
+  phone        String?
+  userId       Int                 @unique(map: "Employee_userId_key")
+  companyId    Int
+  departmentId Int
+  managerId    Int
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  attendance   attendance[]
+  company      company             @relation(fields: [companyId], references: [id], map: "Employee_companyId_fkey")
+  department   department          @relation(fields: [departmentId], references: [id], map: "Employee_departmentId_fkey")
+  manager      manager             @relation(fields: [managerId], references: [id], map: "Employee_managerId_fkey")
+  user         user                @relation(fields: [userId], references: [id], map: "Employee_userId_fkey")
+  schedule     schedule[]
+  task         task[]
+
+  @@index([companyId], map: "Employee_companyId_fkey")
+  @@index([departmentId], map: "Employee_departmentId_fkey")
+  @@index([managerId], map: "Employee_managerId_fkey")
+}
+
+model manager {
+  id        Int        @id @default(autoincrement())
+  name      String?
+  secretKey String     @unique(map: "Manager_secretKey_key")
+  userId    Int        @unique(map: "Manager_userId_key")
+  companyId Int?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  employee  employee[]
+  company   company?   @relation(fields: [companyId], references: [id], map: "Manager_companyId_fkey")
+  user      user       @relation(fields: [userId], references: [id], map: "Manager_userId_fkey")
+  task      task[]
+
+  @@index([companyId], map: "Manager_companyId_fkey")
+}
+
+model notification {
+  id        Int      @id @default(autoincrement())
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      user     @relation(fields: [userId], references: [id], map: "Notification_userId_fkey")
+
+  @@index([userId], map: "Notification_userId_fkey")
+}
+
+model schedule {
+  id         Int          @id @default(autoincrement())
+  startDate  DateTime
+  endDate    DateTime
+  employeeId Int
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  endTime    DateTime
+  startTime  DateTime
+  attendance attendance[]
+  employee   employee     @relation(fields: [employeeId], references: [id], map: "Schedule_employeeId_fkey")
+
+  @@index([employeeId], map: "Schedule_employeeId_fkey")
+}
+
+model task {
+  id          Int          @id @default(autoincrement())
+  title       String
+  description String
+  status      task_status  @default(IN_PROGRESS)
+  file        String?      @default("")
+  employeeId  Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  managerId   Int
+  employee    employee     @relation(fields: [employeeId], references: [id], map: "Task_employeeId_fkey")
+  manager     manager      @relation(fields: [managerId], references: [id], map: "Task_managerId_fkey")
+  taskreport  taskreport[]
+
+  @@index([employeeId], map: "Task_employeeId_fkey")
+  @@index([managerId], map: "Task_managerId_fkey")
+}
+
+model taskreport {
+  id          Int               @id @default(autoincrement())
+  title       String
+  description String
+  file        String
+  status      taskreport_status @default(UNVERIFIED)
+  taskId      Int
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  task        task              @relation(fields: [taskId], references: [id], map: "TaskReport_taskId_fkey")
+
+  @@index([taskId], map: "TaskReport_taskId_fkey")
+}
+
+model user {
+  id           Int            @id @default(autoincrement())
+  username     String
+  email        String         @unique(map: "User_email_key")
+  password     String
+  role         user_role
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  employee     employee?
+  manager      manager?
+  notification notification[]
+}
+
+enum attendance_status {
   PRESENT
   ABSENT
   LATE
@@ -39,158 +174,30 @@ enum AttendanceStatus {
   LEAVE_EARLY
 }
 
-enum TaskStatus {
+enum task_status {
   IN_PROGRESS
   COMPLETED
 }
 
-enum TaskReportStatus {
+enum employee_gender {
+  PRIA
+  WANITA
+}
+
+enum taskreport_status {
   UNVERIFIED
   VERIFIED
   REJECTED
 }
 
-enum Days {
-  SUNDAY
-  MONDAY
-  TUESDAY
-  WEDNESDAY
-  THURSDAY
-  FRIDAY
-  SATURDAY
+enum user_role {
+  ADMIN
+  EMPLOYEE
+  MANAGER
 }
 
-model User {
-  id           Int            @id @default(autoincrement())
-  username     String
-  email        String         @unique
-  password     String
-  role         Role
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  Employee     Employee?
-  Manager      Manager?
-  Notification Notification[]
-}
-
-model Manager {
-  id        Int        @id @default(autoincrement())
-  name      String?
-  secretKey String     @unique
-  userId    Int        @unique
-  companyId Int?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  User      User       @relation(fields: [userId], references: [id])
-  Employee  Employee[]
-  Company   Company?   @relation(fields: [companyId], references: [id])
-  Task      Task[]
-}
-
-model Employee {
-  id           Int          @id @default(autoincrement())
-  name         String?
-  address      String?
-  birth_date   DateTime?
-  gender       Gender?
-  job_status   JobStatus
-  phone        String?
-  userId       Int          @unique
-  companyId    Int
-  departmentId Int
-  managerId    Int
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  User         User         @relation(fields: [userId], references: [id])
-  Company      Company      @relation(fields: [companyId], references: [id])
-  Department   Department   @relation(fields: [departmentId], references: [id])
-  Manager      Manager      @relation(fields: [managerId], references: [id])
-  Attendance   Attendance[]
-  Task         Task[]
-  Schedule     Schedule[]
-}
-
-model Attendance {
-  id         Int              @id @default(autoincrement())
-  image      String?
-  date       DateTime
-  checkIn    DateTime
-  checkOut   DateTime?
-  status     AttendanceStatus
-  employeeId Int
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
-  Employee   Employee         @relation(fields: [employeeId], references: [id])
-}
-
-model Schedule {
-  id         Int        @id @default(autoincrement())
-  startDate  DateTime
-  endDate    DateTime
-  startTime  DateTime
-  endTime    DateTime
-  employeeId Int
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  Employee   Employee   @relation(fields: [employeeId], references: [id])
-}
-
-model Company {
-  id         Int          @id @default(autoincrement())
-  email      String       @unique
-  name       String
-  address    String
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  Employee   Employee[]
-  Department Department[]
-  Manager    Manager[]
-}
-
-model Department {
-  id        Int        @id @default(autoincrement())
-  name      String
-  companyId Int
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  Company   Company    @relation(fields: [companyId], references: [id])
-  Employee  Employee[]
-}
-
-model Task {
-  id          Int          @id @default(autoincrement())
-  title       String
-  description String
-  status      TaskStatus   @default(IN_PROGRESS)
-  file        String?      @default("")
-  employeeId  Int
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  Employee    Employee     @relation(fields: [employeeId], references: [id])
-  TaskReport  TaskReport[]
-  Manager     Manager      @relation(fields: [managerId], references: [id])
-  managerId   Int
-}
-
-model TaskReport {
-  id          Int              @id @default(autoincrement())
-  title       String
-  description String
-  file        String
-  status      TaskReportStatus @default(UNVERIFIED)
-  taskId      Int
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  Task        Task             @relation(fields: [taskId], references: [id])
-}
-
-model Notification {
-  id        Int      @id @default(autoincrement())
-  title     String
-  message   String
-  read      Boolean  @default(false)
-  userId    Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  User      User     @relation(fields: [userId], references: [id])
+enum employee_job_status {
+  CONTRACT
+  PERMANENT
+  PROJECT
 }

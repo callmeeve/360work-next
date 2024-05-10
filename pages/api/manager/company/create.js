@@ -24,6 +24,10 @@ export default async function handle(req, res) {
 
   const { name, email, address } = req.body;
 
+  if (!name || !email || !address) {
+    return res.status(400).json({ message: "Name, email, and address are required" });
+  }
+
   const manager = await prisma.manager.findUnique({
     where: {
       userId: decoded.id,
@@ -38,10 +42,10 @@ export default async function handle(req, res) {
   try {
     company = await prisma.company.create({
       data: {
-        name: name,
-        email: email,
-        address: address,
-        Manager: {
+        name,
+        email,
+        address,
+        manager: {
           connect: {
             id: manager.id,
           },
@@ -49,6 +53,7 @@ export default async function handle(req, res) {
       },
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ message: "Failed to create company", error });
   }
 

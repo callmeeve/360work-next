@@ -40,7 +40,7 @@ const upload = multer({
   },
 }).single("file");
 
-export default async function handle(req, res) {
+export default async function handler(req, res) {
   upload(req, res, async function (err) {
     if (err instanceof multer.MulterError) {
       return res.status(500).json(err);

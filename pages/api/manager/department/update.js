@@ -29,9 +29,9 @@ export default async function handle(req, res) {
       id,
     },
     include: {
-      Company: {
+      company: {
         select: {
-          Manager: true,
+          manager: true,
         },
       },
     },
@@ -39,8 +39,8 @@ export default async function handle(req, res) {
 
   if (
     !department ||
-    !department.Company.Manager ||
-    department.Company.Manager.userId !== decoded.id
+    !department.company.manager ||
+    department.company.manager.userId !== decoded.id
   ) {
     return res
       .status(403)

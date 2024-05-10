@@ -26,7 +26,13 @@ function RegisterForm() {
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      router.push("/login");
+      if (user.role === "EMPLOYEE") {
+        router.push("/employee");
+      } else if (user.role === "MANAGER") {
+        router.push("/manager");
+      } else {
+        router.push("/");
+      }
 
     } catch (error) {
       console.error("Error during registration", error);
