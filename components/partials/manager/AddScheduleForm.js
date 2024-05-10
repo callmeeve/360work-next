@@ -87,7 +87,7 @@ const CreateScheduleModal = ({ isOpen, onClose }) => {
                 <option value="">Select Employee</option>
                 {employees.map((employee) => (
                   <option key={employee.id} value={employee.id}>
-                    {employee.User.username}
+                    {employee.user.username}
                   </option>
                 ))}
               </select>

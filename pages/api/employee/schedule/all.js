@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         userId: decoded.id,
       },
       include: {
-        Manager: true,
+        manager: true,
       },
     });
   } catch (error) {
@@ -41,14 +41,21 @@ export default async function handler(req, res) {
     return res.status(404).json({ message: "Employee not found" });
   }
 
-  const schedules = await prisma.schedule.findMany({
-    where: {
-      employeeId: employee.id,
-    },
-    orderBy: {
-      startDate: "asc",
-    },
-  });
+  let schedules;
+  try {
+    schedules = await prisma.schedule.findMany({
+      where: {
+        employeeId: employee.id,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Failed to retrieve schedules", error });
+  }
 
-  return res.status(200).json(schedules);
+  res
+    .status(200)
+    .json({ message: "Schedules retrieved successfully", schedules });
 }

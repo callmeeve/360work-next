@@ -29,7 +29,7 @@ export default async function handler(req, res) {
         userId: decoded.id,
       },
       include: {
-        Company: true,
+        company: true,
       },
     });
   } catch (error) {
@@ -45,7 +45,7 @@ export default async function handler(req, res) {
   try {
     schedules = await prisma.schedule.findMany({
       include: {
-        Employee: true,
+        employee: true,
       },
     });
   } catch (error) {

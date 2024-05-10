@@ -1,5 +1,6 @@
 import { prisma } from "@/config/db";
 import jwt from "jsonwebtoken";
+import { zonedTimeToUtc } from 'date-fns-tz';
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -29,7 +30,7 @@ export default async function handler(req, res) {
         userId: decoded.id,
       },
       include: {
-        Company: true,
+        company: true,
       },
     });
   } catch (error) {
@@ -64,15 +65,19 @@ export default async function handler(req, res) {
   }
 
   try {
-    const startTimeDate = new Date(`1970-01-01T${startTime}`);
-    const endTimeDate = new Date(`1970-01-01T${endTime}`);
+    const timeZone = 'Asia/Jakarta';
+    const startTimeDate = zonedTimeToUtc(`1970-01-01T${startTime}`, timeZone);
+    const endTimeDate = zonedTimeToUtc(`1970-01-01T${endTime}`, timeZone);
+    const startDateUtc = zonedTimeToUtc(startDate, timeZone);
+    const endDateUtc = zonedTimeToUtc(endDate, timeZone);
+
     const schedule = await prisma.schedule.create({
       data: {
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
+        startDate: startDateUtc,
+        endDate: endDateUtc,
         startTime: startTimeDate,
         endTime: endTimeDate,
-        Employee: {
+        employee: {
           connect: {
             id: parseInt(employeeId),
           },
