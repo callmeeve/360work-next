@@ -21,15 +21,19 @@ export default function Header({ showNav, setShowNav, users, handleLogout }) {
       }`}
     >
       <div className="pl-4 md:pl-16">
-        <HiBars3
-          className="h-8 w-8 text-gray-700 cursor-pointer"
+        <div
+          className="hover:bg-indigo-100 rounded-full p-2 hover:cursor-pointer"
           onClick={() => setShowNav(!showNav)}
-        />
+        >
+          <HiBars3 className="h-8 w-8 text-gray-700" />
+        </div>
       </div>
       <div className="flex items-center pr-4 md:pr-16">
-        <Popover className="relative">
+        <Popover className="relative flex">
           <Popover.Button className="outline-none mr-5 md:mr-8 cursor-pointer text-gray-700">
-            <HiOutlineBell className="h-6 w-6" />
+            <div className="hover:bg-indigo-100 rounded-full p-2 hover:cursor-pointer">
+              <HiOutlineBell className="h-6 w-6" />
+            </div>
           </Popover.Button>
           <Transition
             as={Fragment}
@@ -40,11 +44,11 @@ export default function Header({ showNav, setShowNav, users, handleLogout }) {
             leaveFrom="transform scale-100"
             leaveTo="transform scale-95"
           >
-            <Popover.Panel className="absolute -right-16 sm:right-4 z-50 mt-2 bg-white border shadow-sm rounded-md max-w-xs sm:max-w-sm w-screen">
+            <Popover.Panel className="absolute top-full -right-16 sm:right-4 z-50 mt-2 bg-white border shadow-sm rounded-md max-w-xs sm:max-w-sm w-screen">
               <div className="relative p-4">
                 <div className="flex justify-between items-center w-full">
                   <p className="text-gray-700 font-medium">Notifications</p>
-                  <a className="text-sm text-orange-500" href="#">
+                  <a className="text-sm text-indigo-500" href="#">
                     Mark all as read
                   </a>
                 </div>
@@ -108,23 +112,23 @@ export default function Header({ showNav, setShowNav, users, handleLogout }) {
         </Popover>
         <Menu as="div" className="relative inline-block text-left">
           <div>
-            <Menu.Button className="inline-flex w-full justify-center items-center">
+            <Menu.Button className="inline-flex gap-2 w-full justify-center items-center hover:bg-indigo-100 p-2 rounded-full">
               <picture>
                 <Image
-                  className="rounded-full h-8 md:mr-2 border-2 border-white shadow-sm"
+                  className="rounded-full h-8 shadow-sm"
                   src="/avatar.svg"
                   width={40}
                   height={40}
                   alt="Avatar"
                 />
               </picture>
-              <div className="hidden md:flex md:flex-col items-start">
+              <div className="hidden md:flex md:flex-col items-start mr-1">
                 <p className="text-gray-700 text-sm font-medium">
                   {users.username}
                 </p>
                 <p className="text-gray-500 text-xs lowercase">{users.role}</p>
               </div>
-              <HiChevronDown className="ml-2 h-4 w-4 text-gray-700" />
+              {/* <HiChevronDown className="ml-2 h-4 w-4 text-gray-700" /> */}
             </Menu.Button>
           </div>
           <Transition
@@ -141,7 +145,7 @@ export default function Header({ showNav, setShowNav, users, handleLogout }) {
                 <Menu.Item>
                   <Link
                     href={`/${users.role.toLowerCase()}/profile`}
-                    className="flex hover:bg-primary hover:text-white text-gray-800 rounded p-2 text-sm group transition-colors items-center"
+                    className="flex hover:bg-indigo-100 text-gray-800 rounded p-2 text-sm group transition-colors items-center"
                   >
                     <HiUser className="h-4 w-4 mr-2" />
                     Profile
@@ -150,7 +154,7 @@ export default function Header({ showNav, setShowNav, users, handleLogout }) {
                 <Menu.Item>
                   <Link
                     href="#"
-                    className="flex hover:bg-primary hover:text-white text-gray-800 rounded p-2 text-sm group transition-colors items-center"
+                    className="flex hover:bg-indigo-100 text-gray-800 rounded p-2 text-sm group transition-colors items-center"
                   >
                     <HiCreditCard className="h-4 w-4 mr-2" />
                     Billing
@@ -159,7 +163,7 @@ export default function Header({ showNav, setShowNav, users, handleLogout }) {
                 <Menu.Item>
                   <button
                     onClick={handleLogout}
-                    className="w-full flex hover:bg-primary hover:text-white text-gray-800 rounded p-2 text-sm group transition-colors items-center"
+                    className="w-full flex hover:bg-indigo-100 text-gray-800 rounded p-2 text-sm group transition-colors items-center"
                   >
                     <IoLogOutOutline className="h-4 w-4 mr-2" />
                     Logout
