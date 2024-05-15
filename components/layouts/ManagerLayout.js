@@ -80,7 +80,7 @@ function ManagerLayout({ children }) {
         <Sidebar showNav={showNav} role={user.role} />
       </Transition>
       <main
-        className="flex-1 transition-all duration-[400ms]"
+        className={`flex-1 transition-all duration-[400ms] ${showNav ? 'pl-64' : 'pl-0'}`}
       >
         <div className="pt-16 px-4 md:px-16">{children}</div>
       </main>

@@ -2,24 +2,13 @@ import React, { forwardRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Navigation from "../data/helper/Navigation";
-import Image from "next/image";
 
 const Sidebar = forwardRef(({ showNav, role }, ref) => {
   const router = useRouter();
   const navigation = Navigation.find((nav) => nav.role === role);
   return (
-    <div ref={ref} className="w-64 bg-gray-50">
+    <div ref={ref} className="w-64 bg-white h-screen fixed overflow-auto">
       <div className="flex justify-center mt-6 mb-14">
-        {/* <picture>
-          <Image
-            src="/next.svg"
-            className="w-28 h-auto"
-            width={24}
-            height={24}
-            alt="Next.js"
-            priority
-          />
-        </picture> */}
         <h1 className="text-2xl font-bold text-gray-800">
           360WORK.ID
         </h1>

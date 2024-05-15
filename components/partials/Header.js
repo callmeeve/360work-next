@@ -5,10 +5,8 @@ import Link from "next/link";
 import {
   HiBars3,
   HiCheckCircle,
-  HiChevronDown,
   HiCreditCard,
   HiOutlineBell,
-  HiPencil,
   HiUser,
 } from "react-icons/hi2";
 import { IoLogOutOutline } from "react-icons/io5";
@@ -16,22 +14,22 @@ import { IoLogOutOutline } from "react-icons/io5";
 export default function Header({ showNav, setShowNav, users, handleLogout }) {
   return (
     <div
-      className={`fixed w-full h-16 flex justify-between items-center transition-all duration-[400ms] bg-white ${
+      className={`fixed w-full h-16 flex justify-between items-center transition-all duration-[400ms] border-b bg-white shadow-sm ${
         showNav ? "pl-56" : ""
       }`}
     >
       <div className="pl-4 md:pl-16">
         <div
-          className="hover:bg-indigo-100 rounded-full p-2 hover:cursor-pointer"
+          className="hover:bg-indigo-100 hover:text-indigo-500 text-gray-700 rounded-full p-2 hover:cursor-pointer"
           onClick={() => setShowNav(!showNav)}
         >
-          <HiBars3 className="h-8 w-8 text-gray-700" />
+          <HiBars3 className="h-8 w-8" />
         </div>
       </div>
       <div className="flex items-center pr-4 md:pr-16">
         <Popover className="relative flex">
           <Popover.Button className="outline-none mr-5 md:mr-8 cursor-pointer text-gray-700">
-            <div className="hover:bg-indigo-100 rounded-full p-2 hover:cursor-pointer">
+            <div className="hover:bg-indigo-100 hover:text-indigo-500 rounded-full p-2 hover:cursor-pointer">
               <HiOutlineBell className="h-6 w-6" />
             </div>
           </Popover.Button>
@@ -112,7 +110,7 @@ export default function Header({ showNav, setShowNav, users, handleLogout }) {
         </Popover>
         <Menu as="div" className="relative inline-block text-left">
           <div>
-            <Menu.Button className="inline-flex gap-2 w-full justify-center items-center hover:bg-indigo-100 p-2 rounded-full">
+            <Menu.Button className="inline-flex gap-2 w-full justify-center items-center hover:bg-indigo-100 py-2 px-4 rounded-full">
               <picture>
                 <Image
                   className="rounded-full h-8 shadow-sm"
@@ -122,13 +120,12 @@ export default function Header({ showNav, setShowNav, users, handleLogout }) {
                   alt="Avatar"
                 />
               </picture>
-              <div className="hidden md:flex md:flex-col items-start mr-1">
+              <div className="hidden md:flex md:flex-col items-start">
                 <p className="text-gray-700 text-sm font-medium">
                   {users.username}
                 </p>
                 <p className="text-gray-500 text-xs lowercase">{users.role}</p>
               </div>
-              {/* <HiChevronDown className="ml-2 h-4 w-4 text-gray-700" /> */}
             </Menu.Button>
           </div>
           <Transition
