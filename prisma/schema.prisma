@@ -10,18 +10,14 @@ datasource db {
 model attendance {
   id         Int               @id @default(autoincrement())
   image      String?
-  date       DateTime
   status     attendance_status
   employeeId Int
-  scheduleId Int
   createdAt  DateTime          @default(now())
   updatedAt  DateTime          @updatedAt
   checkIn    DateTime?
   checkOut   DateTime?
   employee   employee          @relation(fields: [employeeId], references: [id], map: "Attendance_employeeId_fkey")
-  schedule   schedule          @relation(fields: [scheduleId], references: [id], map: "Attendance_scheduleId_fkey")
 
-  @@index([scheduleId], map: "Attendance_scheduleId_fkey")
   @@index([employeeId], map: "Attendance_employeeId_fkey")
 }
 
@@ -68,7 +64,6 @@ model employee {
   department   department          @relation(fields: [departmentId], references: [id], map: "Employee_departmentId_fkey")
   manager      manager             @relation(fields: [managerId], references: [id], map: "Employee_managerId_fkey")
   user         user                @relation(fields: [userId], references: [id], map: "Employee_userId_fkey")
-  schedule     schedule[]
   task         task[]
 
   @@index([companyId], map: "Employee_companyId_fkey")
@@ -105,20 +100,6 @@ model notification {
   @@index([userId], map: "Notification_userId_fkey")
 }
 
-model schedule {
-  id         Int          @id @default(autoincrement())
-  startDate  DateTime
-  endDate    DateTime
-  employeeId Int
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  endTime    DateTime
-  startTime  DateTime
-  attendance attendance[]
-  employee   employee     @relation(fields: [employeeId], references: [id], map: "Schedule_employeeId_fkey")
-
-  @@index([employeeId], map: "Schedule_employeeId_fkey")
-}
 
 model task {
   id          Int          @id @default(autoincrement())
