@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import RoleBasedLayout from "@/components/data/helper/RoleBasedLayout";
 import api from "@/components/data/utils/api";
+import { HiOutlineUserCircle } from "react-icons/hi2";
+import Image from "next/image";
 
 const EmployeeProfilePage = () => {
   const [employee, setEmployee] = useState();
@@ -71,31 +73,55 @@ const EmployeeProfilePage = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="my-8">
-        <div className="p-4 bg-white border rounded-lg shadow-sm">
+      <div className="flex-grow my-8">
+        <div className="p-4">
           {isDataComplete ? (
             <div
               key={employee.id || index}
-              className="flex flex-col justify-start p-6 m-4"
+              className="flex flex-col p-4 bg-white rounded-lg shadow-sm border"
             >
-              <h1 className="text-3xl font-semibold mb-4">Employee Profile</h1>
-              <div className="flex items-center gap-4 mb-2">
-                <p className="text-gray-500 w-24 flex-none">Address:</p>
-                <span className="text-gray-700">{employee.address}</span>
-              </div>
-              <div className="flex items-center gap-4 mb-2">
-                <p className="text-gray-500 w-24">Birth Date:</p>
-                <span className="text-gray-700">
-                  {new Date(employee.birth_date).toLocaleDateString("en-GB")}
-                </span>
-              </div>
-              <div className="flex items-center gap-4 mb-2">
-                <p className="text-gray-500 w-24">Gender:</p>
-                <span className="text-gray-700">{employee.gender}</span>
-              </div>
-              <div className="flex items-center gap-4 mb-2">
-                <p className="text-gray-500 w-24">Phone:</p>
-                <span className="text-gray-700">{employee.phone}</span>
+              <div className="p-4">
+                <div className="flex items-center mb-5">
+                  <Image
+                    src="/avatar.svg"
+                    alt="avatar"
+                    width={100}
+                    height={100}
+                    className="rounded-full"
+                  />
+                  <div className="ml-4">
+                    <div className="text-sm font-semibold text-primary mb-2">
+                      {employee.job_status}
+                    </div>
+                    <p className="font-bold text-lg">{employee.name}</p>
+                    <p className="text-gray-500">{employee.user.email}</p>
+                  </div>
+                </div>
+                <div className="flex flex-col space-y-4 md:flex-row md:space-x-12 md:space-y-0">
+                  <div>
+                    <p className="font-medium text-primary">Phone</p>
+                    <p className="text-gray-500 text-sm">{employee.phone}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-primary">Birth Date</p>
+                    <p className="text-gray-500 text-sm">
+                      {employee.birth_date}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-primary">Gender</p>
+                    <p className="text-gray-500 text-sm">{employee.gender}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-primary">Address</p>
+                    <p className="text-gray-500 text-sm">{employee.address}</p>
+                  </div>
+                </div>
+                <div className="flex justify-end mt-8 md:mt-5">
+                  <button className="bg-primary text-white px-4 py-2 rounded">
+                    Edit Profile
+                  </button>
+                </div>
               </div>
             </div>
           ) : (

@@ -18,7 +18,7 @@ const Sidebar = forwardRef(({ showNav, role }, ref) => {
         {navigation.menu.map(({ name, href, icon: Icon }) => (
           <Link key={href} href={href}>
             <div
-              className={`pl-6 py-3 mx-2 rounded-lg text-center font-medium text-sm cursor-pointer mb-1 flex items-center transition-colors ${
+              className={`pl-6 py-3 mx-2 rounded-sm text-center font-medium text-sm cursor-pointer mb-3 flex items-center transition-colors ${
                 router.pathname == href
                   ? "bg-indigo-500 text-white"
                   : "text-gray-800 hover:bg-indigo-100"

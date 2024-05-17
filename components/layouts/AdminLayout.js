@@ -9,6 +9,9 @@ function AdminLayout({ children }) {
   const [user, setUser] = useState(null);
   const [showNav, setShowNav] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
 
   const checkUser = () => {
@@ -58,32 +61,50 @@ function AdminLayout({ children }) {
     );
   }
 
-
   return (
     <div className="w-full min-h-screen flex">
-      <Header
-        showNav={showNav}
-        setShowNav={setShowNav}
-        users={user}
-        handleLogout={handleLogout}
-      />
-      <Transition
-        as={Fragment}
-        show={showNav}
-        enter="transform transition duration-[400ms]"
-        enterFrom="-translate-x-full"
-        enterTo="translate-x-0"
-        leave="transform duration-[400ms] transition ease-in-out"
-        leaveFrom="translate-x-0"
-        leaveTo="-translate-x-full"
-      >
-        <Sidebar showNav={showNav} role={user.role} />
-      </Transition>
-      <main
-        className={`flex-1 transition-all duration-[400ms] ${showNav ? 'pl-64' : 'pl-0'}`}
-      >
-        <div className="pt-16 px-4 md:px-16">{children}</div>
-      </main>
+      {loading ? (
+        <div className="flex justify-center items-center h-screen">
+          <ThreeDots
+            visible={true}
+            height="80"
+            width="80"
+            color="#4fa94d"
+            radius="9"
+            ariaLabel="three-dots-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+          />
+        </div>
+      ) : (
+        <>
+          <Header
+            showNav={showNav}
+            setShowNav={setShowNav}
+            users={user}
+            handleLogout={handleLogout}
+          />
+          <Transition
+            as={Fragment}
+            show={showNav}
+            enter="transform transition duration-[400ms]"
+            enterFrom="-translate-x-full"
+            enterTo="translate-x-0"
+            leave="transform duration-[400ms] transition ease-in-out"
+            leaveFrom="translate-x-0"
+            leaveTo="-translate-x-full"
+          >
+            <Sidebar showNav={showNav} role={user.role} />
+          </Transition>
+          <main
+            className={`flex-1 transition-all duration-[400ms] ${
+              showNav ? "pl-64" : "pl-0"
+            }`}
+          >
+            <div className="pt-16 px-4 md:px-16">{children}</div>
+          </main>
+        </>
+      )}
     </div>
   );
 }

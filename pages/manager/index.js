@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
-// import dayjs from "dayjs";
-// import cn from "@/components/data/utils/cn";
-// import { generateDate, months } from "@/components/data/utils/calendar";
 import RoleBasedLayout from "@/components/data/helper/RoleBasedLayout";
 import {
   HiOutlineBuildingOffice,
   HiOutlineBuildingOffice2,
-  // HiChevronDoubleLeft,
-  // HiChevronDoubleRight,
   HiOutlineUserGroup,
   HiOutlineMagnifyingGlass,
   HiChevronLeft,
@@ -22,11 +17,6 @@ const ManagerDashboard = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  // const days = ["S", "M", "T", "W", "T", "F", "S"];
-  // const currentDate = dayjs();
-  // const [today, setToday] = useState(currentDate);
-  // const [selectDate, setSelectDate] = useState(currentDate);
 
   const getEmployees = async () => {
     setLoading(true);
@@ -80,53 +70,61 @@ const ManagerDashboard = () => {
           <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
           <p className="text-gray-500">Welcome to the Manager Dashboard</p>
         </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <div className="bg-white p-4 rounded-md border shadow-sm">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center justify-center border text-primary w-12 h-12 rounded-md">
-                <HiOutlineUserGroup className="h-6 w-6" />
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-purple-500"></div>
+          </div>
+        ) : error ? (
+          <div className="text-center text-red-500">{error.message}</div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="bg-white p-4 rounded-md border shadow-sm">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center justify-center border text-primary w-12 h-12 rounded-md">
+                  <HiOutlineUserGroup className="h-6 w-6" />
+                </div>
+                <p className="text-gray-800 text-lg font-semibold">
+                  Total Employees
+                </p>
               </div>
-              <p className="text-gray-800 text-lg font-semibold">
-                Total Employees
-              </p>
+              <div className="mt-4">
+                <p className="text-gray-800 text-2xl font-bold">
+                  {employees.length}
+                </p>
+              </div>
             </div>
-            <div className="mt-4">
-              <p className="text-gray-800 text-2xl font-bold">
-                {employees.length}
-              </p>
+            <div className="bg-white p-4 rounded-md border shadow-sm">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center justify-center border text-primary w-12 h-12 rounded-md">
+                  <HiOutlineBuildingOffice className="h-6 w-6" />
+                </div>
+                <p className="text-gray-800 text-lg font-semibold">
+                  Total Companies
+                </p>
+              </div>
+              <div className="mt-4">
+                <p className="text-gray-800 text-2xl font-bold">
+                  {companies.length}
+                </p>
+              </div>
+            </div>
+            <div className="bg-white p-4 rounded-md border shadow-sm">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center justify-center border text-primary w-12 h-12 rounded-md">
+                  <HiOutlineBuildingOffice2 className="h-6 w-6" />
+                </div>
+                <p className="text-gray-800 text-lg font-semibold">
+                  Total Departments
+                </p>
+              </div>
+              <div className="mt-4">
+                <p className="text-gray-800 text-2xl font-bold">
+                  {departments.length}
+                </p>
+              </div>
             </div>
           </div>
-          <div className="bg-white p-4 rounded-md border shadow-sm">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center justify-center border text-primary w-12 h-12 rounded-md">
-                <HiOutlineBuildingOffice className="h-6 w-6" />
-              </div>
-              <p className="text-gray-800 text-lg font-semibold">
-                Total Companies
-              </p>
-            </div>
-            <div className="mt-4">
-              <p className="text-gray-800 text-2xl font-bold">
-                {companies.length}
-              </p>
-            </div>
-          </div>
-          <div className="bg-white p-4 rounded-md border shadow-sm">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center justify-center border text-primary w-12 h-12 rounded-md">
-                <HiOutlineBuildingOffice2 className="h-6 w-6" />
-              </div>
-              <p className="text-gray-800 text-lg font-semibold">
-                Total Departments
-              </p>
-            </div>
-            <div className="mt-4">
-              <p className="text-gray-800 text-2xl font-bold">
-                {departments.length}
-              </p>
-            </div>
-          </div>
-        </div>
+        )}
         <div className="mt-12">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">

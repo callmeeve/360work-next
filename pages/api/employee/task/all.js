@@ -41,14 +41,22 @@ export default async function handler(req, res) {
     return res.status(404).json({ message: "Employee not found" });
   }
 
-  const attendances = await prisma.attendance.findMany({
+  const tasks = await prisma.task.findMany({
     where: {
       employeeId: employee.id,
     },
+    include: {
+      employee: true,
+      manager: {
+        select: {
+          user: true,
+        },
+      },
+    },
     orderBy: {
-      date: "desc",
+      createdAt: "desc",
     },
   });
 
-  return res.status(200).json(attendances);
+  return res.status(200).json(tasks);
 }

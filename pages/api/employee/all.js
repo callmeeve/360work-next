@@ -27,10 +27,10 @@ export default async function handle(req, res) {
       userId: decoded.id,
     },
     include: {
-      User: true,
-      Company: true,
-      Department: true,
-      Manager: true,
+      user: true,
+      company: true,
+      department: true,
+      manager: true,
     },
   });
 

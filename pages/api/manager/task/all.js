@@ -1,6 +1,7 @@
 import { prisma } from "@/config/db";
 import jwt from "jsonwebtoken";
 
+
 export default async function handle(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ message: "Method not allowed" });
@@ -11,6 +12,7 @@ export default async function handle(req, res) {
   }
 
   const token = req.headers.authorization.split(" ")[1];
+
   let decoded;
   try {
     decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -22,22 +24,23 @@ export default async function handle(req, res) {
     return res.status(403).json({ message: "You are not authorized" });
   }
 
-  let companies;
+  let tasks;
   try {
-    companies = await prisma.company.findMany({
+    tasks = await prisma.task.findMany({
       where: {
-        manager: {
-          some: {
-            userId: decoded.id,
+        managerId: decoded.id,
+      },
+      include: {
+        employee: {
+          select: {
+            user: true,
           },
         },
       },
     });
   } catch (error) {
-    return res.status(500).json({ message: "Failed to retrieve companies", error });
+    return res.status(500).json({ message: "Failed to retrieve tasks", error });
   }
 
-  res
-    .status(200)
-    .json({ message: "Companies retrieved successfully", companies });
+  res.status(200).json({ message: "Tasks retrieved successfully", tasks });
 }

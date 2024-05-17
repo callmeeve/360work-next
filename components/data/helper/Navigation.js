@@ -1,5 +1,5 @@
 import { IoCalendarOutline, IoGridOutline, IoPeopleOutline } from "react-icons/io5";
-import { HiOutlineBuildingOffice, HiOutlineBuildingOffice2, HiOutlineCalendar } from "react-icons/hi2";
+import { HiOutlineBuildingOffice, HiOutlineBuildingOffice2, HiOutlineDocumentText } from "react-icons/hi2";
 
 const Navigation = [
   {
@@ -15,6 +15,7 @@ const Navigation = [
       { name: "Employee", href: "/manager/employee", icon: IoPeopleOutline },
       { name: "Company", href: "/manager/company", icon: HiOutlineBuildingOffice },
       { name: "Department", href: "/manager/department", icon: HiOutlineBuildingOffice2 },
+      { name: "Task", href: "/manager/task", icon: HiOutlineDocumentText },
     ],
   },
   {
