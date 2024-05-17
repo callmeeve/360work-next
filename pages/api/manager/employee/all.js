@@ -1,4 +1,6 @@
 import { prisma } from "@/config/db";
+import attendance from "@/pages/employee/attendance";
+import manager from "@/pages/manager";
 import jwt from "jsonwebtoken";
 
 export default async function handle(req, res) {

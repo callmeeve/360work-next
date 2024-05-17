@@ -6,6 +6,8 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [job_status, setJobStatus] = useState("PERMANENT");
+  const [workStart, setWorkStart] = useState("");
+  const [workEnd, setWorkEnd] = useState("");
   const [departments, setDepartments] = useState([]);
   const [departmentId, setDepartmentId] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,6 +41,8 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
         password,
         job_status,
         departmentId,
+        workStart,
+        workEnd,
       });
 
       if (res.status === 200) {
@@ -47,7 +51,10 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
         setEmail("");
         setPassword("");
         setJobStatus("PERMANENT");
+        setWorkStart("");
+        setWorkEnd("");
         setDepartmentId("");
+
 
         alert("Employee added successfully");
         window.location.reload();
@@ -142,6 +149,30 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
                   <option value="CONTRACT">CONTRACT</option>
                   <option value="PROJECT">PROJECT</option>
                 </select>
+              </div>
+              <div className="mb-5">
+                <label className="block mb-2 text-sm font-medium text-gray-800">
+                  Work Hours
+                </label>
+                <div className="flex items-center">
+                  <input
+                    type="time"
+                    value={workStart}
+                    onChange={(e) => setWorkStart(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5"
+                    placeholder="Start"
+                    required
+                  />
+                  <span className="mx-2">to</span>
+                  <input
+                    type="time"
+                    value={workEnd}
+                    onChange={(e) => setWorkEnd(e.target.value)}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5"
+                    placeholder="End"
+                    required
+                  />
+                </div>
               </div>
               <div className="mb-5">
                 <label

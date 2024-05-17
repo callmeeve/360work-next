@@ -36,10 +36,35 @@ export default async function handle(req, res) {
     return res.status(404).json({ message: "Manager not found" });
   }
 
-  const { username, email, password, job_status, departmentId } = req.body;
+  const {
+    username,
+    email,
+    password,
+    job_status,
+    departmentId,
+    workStart,
+    workEnd,
+  } = req.body;
 
-  if (!username || !email || !password || !job_status || !departmentId) {
+  if (
+    !username ||
+    !email ||
+    !password ||
+    !job_status ||
+    !departmentId ||
+    !workStart ||
+    !workEnd
+  ) {
     return res.status(400).json({ message: "Missing required fields" });
+  }
+
+  // Validate workStart and workEnd format
+  const isValidTime = (timeString) => {
+    return /^([01]\d|2[0-3]):([0-5]\d)$/.test(timeString);
+  };
+
+  if (!isValidTime(workStart) || !isValidTime(workEnd)) {
+    return res.status(400).json({ message: "Invalid time format for workStart or workEnd" });
   }
 
   const existingUser = await prisma.user.findUnique({
@@ -105,7 +130,30 @@ export default async function handle(req, res) {
     },
   });
 
-  res
-    .status(200)
-    .json({ message: "Employee created successfully", newEmployee });
+  // Construct full date-time strings from current date and provided time values
+  const currentDate = new Date().toISOString().split('T')[0]; // Get current date in ISO format
+  const start = new Date(`${currentDate}T${workStart}:00`).toISOString();
+  const end = new Date(`${currentDate}T${workEnd}:00`).toISOString();
+
+  try {
+    const attendance = await prisma.attendance.create({
+      data: {
+        employeeId: newEmployee.id,
+        workStart: start,
+        workEnd: end,
+        status: null,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Employee and attendance created successfully",
+      newEmployee,
+      attendance,
+    });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Error creating attendance record" });
+  }
 }

@@ -46,7 +46,7 @@ export default async function handler(req, res) {
       employeeId: employee.id,
     },
     orderBy: {
-      date: "desc",
+      createdAt: "desc",
     },
   });
 

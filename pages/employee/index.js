@@ -9,6 +9,9 @@ const EmployeeDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 5;
+
   const getTasks = async () => {
     try {
       const response = await api.get("/api/employee/task/all");
@@ -23,6 +26,29 @@ const EmployeeDashboard = () => {
   useEffect(() => {
     getTasks();
   }, []);
+
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < Math.ceil(tasks.length / tasksPerPage)) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const displayedTasks = tasks.slice(
+    (currentPage - 1) * tasksPerPage,
+    currentPage * tasksPerPage
+  );
+
+  const totalPages = Math.ceil(tasks.length / tasksPerPage);
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <div className="flex flex-col">
@@ -135,6 +161,63 @@ const EmployeeDashboard = () => {
                     ))}
                   </tbody>
                 </table>
+              </div>
+              <div className="flex items-center justify-between mt-6">
+                <button
+                  onClick={handlePrevious}
+                  className="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="w-5 h-5 rtl:-scale-x-100"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
+                    />
+                  </svg>
+                  <span>previous</span>
+                </button>
+                <div className="items-center hidden lg:flex gap-x-3">
+                  {pageNumbers.map((number) => (
+                    <button
+                      key={number}
+                      onClick={() => setCurrentPage(number)}
+                      className={`px-2 py-1 text-sm rounded-md ${
+                        number === currentPage
+                          ? "text-blue-500 bg-blue-100/60"
+                          : "text-gray-500 hover:bg-gray-100"
+                      }`}
+                    >
+                      {number}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={handleNext}
+                  className="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100"
+                >
+                  <span>Next</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth="1.5"
+                    stroke="currentColor"
+                    className="w-5 h-5 rtl:-scale-x-100"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+                    />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>

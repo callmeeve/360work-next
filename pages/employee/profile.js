@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import RoleBasedLayout from "@/components/data/helper/RoleBasedLayout";
 import api from "@/components/data/utils/api";
-import { HiOutlineUserCircle } from "react-icons/hi2";
 import Image from "next/image";
+import { format } from "date-fns";
 
 const EmployeeProfilePage = () => {
   const [employee, setEmployee] = useState();
+  const [attendance, setAttendance] = useState([]);
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [birth_date, setBirthDate] = useState("");
@@ -20,6 +21,19 @@ const EmployeeProfilePage = () => {
       const res = await api.get("/api/employee/all");
       const data = res.data.employee;
       setEmployee(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getAttendances = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get("/api/employee/attendance/all");
+      const data = res.data;
+      setAttendance(data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -57,6 +71,7 @@ const EmployeeProfilePage = () => {
 
   useEffect(() => {
     getEmployees();
+    getAttendances();
   }, []);
 
   useEffect(() => {
@@ -76,51 +91,64 @@ const EmployeeProfilePage = () => {
       <div className="flex-grow my-8">
         <div className="p-4">
           {isDataComplete ? (
-            <div
-              key={employee.id || index}
-              className="flex flex-col p-4 bg-white rounded-lg shadow-sm border"
-            >
-              <div className="p-4">
-                <div className="flex items-center mb-5">
-                  <Image
-                    src="/avatar.svg"
-                    alt="avatar"
-                    width={100}
-                    height={100}
-                    className="rounded-full"
-                  />
-                  <div className="ml-4">
-                    <div className="text-sm font-semibold text-primary mb-2">
-                      {employee.job_status}
+            <div key={employee.id || index} className="flex flex-col p-4">
+              <div className="flex items-center mb-8">
+                <Image
+                  src="/avatar.svg"
+                  alt="avatar"
+                  width={100}
+                  height={100}
+                  className="rounded-full"
+                />
+                <div className="ml-4">
+                  <div className="text-sm font-semibold text-primary mb-2">
+                    {employee.job_status}
+                  </div>
+                  <p className="font-bold text-lg">{employee.name}</p>
+                  <p className="text-gray-500">{employee.user.email}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="font-medium text-primary">Department</p>
+                  <p className="text-gray-500 text-sm">
+                    {employee.department.name}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-primary">Company</p>
+                  <p className="text-gray-500 text-sm">
+                    {employee.company.name}
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-primary">Work Hours</p>
+                  {attendance.map((item, index) => (
+                    <div key={item.id || index}>
+                      <p className="text-gray-500 text-sm">
+                        {format(new Date(item.workStart), "HH:mm")} -{" "}
+                        {format(new Date(item.workEnd), "HH:mm")}
+                      </p>
                     </div>
-                    <p className="font-bold text-lg">{employee.name}</p>
-                    <p className="text-gray-500">{employee.user.email}</p>
-                  </div>
+                  ))}
                 </div>
-                <div className="flex flex-col space-y-4 md:flex-row md:space-x-12 md:space-y-0">
-                  <div>
-                    <p className="font-medium text-primary">Phone</p>
-                    <p className="text-gray-500 text-sm">{employee.phone}</p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-primary">Birth Date</p>
-                    <p className="text-gray-500 text-sm">
-                      {employee.birth_date}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-primary">Gender</p>
-                    <p className="text-gray-500 text-sm">{employee.gender}</p>
-                  </div>
-                  <div>
-                    <p className="font-medium text-primary">Address</p>
-                    <p className="text-gray-500 text-sm">{employee.address}</p>
-                  </div>
+                <div>
+                  <p className="font-medium text-primary">Birth Date</p>
+                  <p className="text-gray-500 text-sm">
+                    {format(new Date(employee.birth_date), "dd MMMM yyyy")}
+                  </p>
                 </div>
-                <div className="flex justify-end mt-8 md:mt-5">
-                  <button className="bg-primary text-white px-4 py-2 rounded">
-                    Edit Profile
-                  </button>
+                <div>
+                  <p className="font-medium text-primary">Phone Number</p>
+                  <p className="text-gray-500 text-sm">{employee.phone}</p>
+                </div>
+                <div>
+                  <p className="font-medium text-primary">Gender</p>
+                  <p className="text-gray-500 text-sm">{employee.gender}</p>
+                </div>
+                <div>
+                  <p className="font-medium text-primary">Address</p>
+                  <p className="text-gray-500 text-sm">{employee.address}</p>
                 </div>
               </div>
             </div>
