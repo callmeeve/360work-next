@@ -9,13 +9,15 @@ datasource db {
 
 model attendance {
   id         Int               @id @default(autoincrement())
-  image      String?
-  status     attendance_status?
+  statusIn     attendance_status?
+  statusOut    attendance_status?
   employeeId Int
   createdAt  DateTime          @default(now())
   updatedAt  DateTime          @updatedAt
   checkIn    DateTime?
+  checkInImage String?
   checkOut   DateTime?
+  checkOutImage String?
   workStart  DateTime?
   workEnd    DateTime?
   employee   employee          @relation(fields: [employeeId], references: [id], map: "Attendance_employeeId_fkey")

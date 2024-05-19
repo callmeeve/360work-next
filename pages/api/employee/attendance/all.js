@@ -45,6 +45,9 @@ export default async function handler(req, res) {
     where: {
       employeeId: employee.id,
     },
+    include: {
+      employee: true,
+    },
     orderBy: {
       createdAt: "desc",
     },

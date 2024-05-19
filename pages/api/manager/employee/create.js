@@ -141,7 +141,6 @@ export default async function handle(req, res) {
         employeeId: newEmployee.id,
         workStart: start,
         workEnd: end,
-        status: null,
       },
     });
 

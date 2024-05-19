@@ -1,8 +1,9 @@
 import { prisma } from "@/config/db";
 import jwt from "jsonwebtoken";
 import multer from "multer";
-import fs, { stat } from "fs";
+import fs from "fs";
 import path from "path";
+import cron from "node-cron";
 
 export const config = {
   api: {
@@ -30,15 +31,13 @@ const upload = multer({
     fileSize: 1024 * 1024 * 5, // limit file size to 5MB
   },
   fileFilter: function (req, file, cb) {
-    // accept only files with extension .jpg, .jpeg, .png, .gif
-    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-      return cb(new Error("Only image files are allowed!"), false);
-    } else if (file.size > 1024 * 1024 * 5) {
+     // accept all file types
+     if (file.size > 1024 * 1024 * 5) {
       return cb(new Error("File size should be less than 5MB"), false);
     }
     cb(null, true);
   },
-}).single("file");
+}).single("image");
 
 export default async function handler(req, res) {
   upload(req, res, async function (err) {
@@ -76,7 +75,7 @@ export default async function handler(req, res) {
           userId: decoded.id,
         },
         include: {
-          Manager: true,
+          manager: true,
         },
       });
     } catch (error) {
@@ -88,14 +87,69 @@ export default async function handler(req, res) {
       return res.status(404).json({ message: "Employee not found" });
     }
 
-    const attendance = await prisma.attendance.create({
-      data: {
-        employeeId: employee.id,
-        checkIn: new Date(),
-        image: req.file ? req.file.filename : null,
-        status: "PRESENT",
-        checkOut: null,
-      },
-    });
+    const checkInTime = new Date();
+    const workStartTime = employee.workStart
+      ? new Date(employee.workStart)
+      : null;
+    let status;
+
+    if (workStartTime && checkInTime > workStartTime) {
+      status = "LATE";
+    } else {
+      status = "PRESENT";
+    }
+
+    try {
+      const attendance = await prisma.attendance.create({
+        data: {
+          employeeId: employee.id,
+          checkIn: checkInTime,
+          checkInImage: req.file ? req.file.filename : "",
+          statusIn: status,
+        },
+      });
+      return res.status(200).json(attendance);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Error creating attendance" });
+    }
   });
 }
+
+// Schedule task to run at 23:59 every day to mark absent employees
+cron.schedule("59 23 * * *", async () => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const employees = await prisma.employee.findMany();
+
+    for (const employee of employees) {
+      const attendance = await prisma.attendance.findFirst({
+        where: {
+          employeeId: employee.id,
+          createdAt: {
+            gte: today,
+            lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+          },
+        },
+      });
+
+      if (!attendance) {
+        await prisma.attendance.create({
+          data: {
+            employeeId: employee.id,
+            statusIn: "ABSENT",
+            checkIn: null,
+            checkOut: null,
+            createdAt: today,
+          },
+        });
+      }
+    }
+
+    console.log("Daily absence check completed");
+  } catch (error) {
+    console.error("Error checking absences:", error);
+  }
+});
