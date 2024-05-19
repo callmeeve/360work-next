@@ -20,7 +20,7 @@ const EmployeeAttendancePage = () => {
     }
   };
 
-  const handleSubmit = async (imageSrc, setImage, url, setCompleted) => {
+  const handleSubmit = async (imageSrc, setImage, url, setCompleted, title) => {
     setLoading(true);
     try {
       const response = await fetch(imageSrc);
@@ -40,6 +40,7 @@ const EmployeeAttendancePage = () => {
       if (setCompleted) {
         setCompleted(true);
       }
+      alert(`${title} successful`);
     } catch (error) {
       console.error(error);
       setError("Error submitting attendance");
@@ -56,49 +57,71 @@ const EmployeeAttendancePage = () => {
           <p className="text-gray-500">Upload your attendance here</p>
         </div>
         <div className="grid grid-cols-2 gap-5">
-          {[
-            {
-              title: "Check In",
-              image: checkInImage,
-              setImage: setCheckInImage,
-              webcamRef: webcamRefCheckIn,
-              url: "/api/employee/attendance/checkin",
-              setCompleted: setCheckInCompleted,
-            },
-            checkInCompleted && {
-              title: "Check Out",
-              image: checkOutImage,
-              setImage: setCheckOutImage,
-              webcamRef: webcamRefCheckOut,
-              url: "/api/employee/attendance/checkout",
-            },
-          ]
-            .filter(Boolean)
-            .map(({ title, image, setImage, webcamRef, url, setCompleted }) => (
-              <div key={title} className="flex flex-col items-center">
-                <h2 className="text-xl font-semibold">{title}</h2>
-                <Webcam
-                  ref={webcamRef}
-                  audio={false}
-                  screenshotFormat="image/jpeg"
-                  width="100%"
-                  height="100%"
-                  onUserMedia={() => alert("Webcam is ready")}
-                />
-                <button
-                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                  onClick={() => handleCapture(webcamRef, setImage)}
-                >
-                  Capture
-                </button>
-                <button
-                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                  onClick={() => handleSubmit(image, setImage, url, setCompleted)}
-                >
-                  {title}
-                </button>
-              </div>
-            ))}
+          {!checkInCompleted ? (
+            <div className="flex flex-col items-center">
+              <h2 className="text-xl font-semibold">Check In</h2>
+              <Webcam
+                ref={webcamRefCheckIn}
+                audio={false}
+                screenshotFormat="image/jpeg"
+                width="100%"
+                height="100%"
+                onUserMedia={() => alert("Webcam is ready")}
+              />
+              <button
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                onClick={() => handleCapture(webcamRefCheckIn, setCheckInImage)}
+              >
+                Capture
+              </button>
+              <button
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                onClick={() =>
+                  handleSubmit(
+                    checkInImage,
+                    setCheckInImage,
+                    "/api/employee/attendance/checkin",
+                    setCheckInCompleted,
+                    "Check In"
+                  )
+                }
+              >
+                Check In
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center">
+              <h2 className="text-xl font-semibold">Check Out</h2>
+              <Webcam
+                ref={webcamRefCheckOut}
+                audio={false}
+                screenshotFormat="image/jpeg"
+                width="100%"
+                height="100%"
+                onUserMedia={() => alert("Webcam is ready")}
+              />
+              <button
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                onClick={() => handleCapture(webcamRefCheckOut, setCheckOutImage)}
+              >
+                Capture
+              </button>
+              <button
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                onClick={() =>
+                  handleSubmit(
+                    checkOutImage,
+                    setCheckOutImage,
+                    "/api/employee/attendance/checkout",
+                    null,
+                    "Check Out"
+                  )
+                }
+              >
+                Check Out
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
