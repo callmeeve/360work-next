@@ -30,15 +30,13 @@ const upload = multer({
     fileSize: 1024 * 1024 * 5, // limit file size to 5MB
   },
   fileFilter: function (req, file, cb) {
-    // accept only files with extension .jpg, .jpeg, .png, .gif
-    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-      return cb(new Error("Only image files are allowed!"), false);
-    } else if (file.size > 1024 * 1024 * 5) {
+    // accept all file types
+    if (file.size > 1024 * 1024 * 5) {
       return cb(new Error("File size should be less than 5MB"), false);
     }
     cb(null, true);
   },
-}).single("file");
+}).single("image");
 
 export default async function handler(req, res) {
   upload(req, res, async function (err) {
@@ -89,14 +87,6 @@ export default async function handler(req, res) {
     }
 
     const checkOutTime = new Date();
-    const workEndTime = employee.workEnd ? new Date(employee.workEnd) : null;
-    let status = "LEAVE";
-
-    if (workEndTime && checkOutTime > workEndTime) {
-      status = "OVER_TIME";
-    } else if (workEndTime && checkOutTime < workEndTime) {
-      status = "LEAVE_EARLY";
-    }
 
     try {
       // Find the existing attendance record for today
@@ -117,6 +107,16 @@ export default async function handler(req, res) {
         return res
           .status(404)
           .json({ message: "Attendance record not found for today" });
+      }
+
+      const workEndTime =
+        attendance && attendance.workEnd ? new Date(attendance.workEnd) : null;
+      let status;
+
+      if (workEndTime && checkOutTime > workEndTime) {
+        status = "OVER_TIME";
+      } else {
+        status = "LEAVE";
       }
 
       const updatedAttendance = await prisma.attendance.update({

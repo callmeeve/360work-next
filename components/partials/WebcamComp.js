@@ -7,8 +7,10 @@ const WebcamComponent = ({ onCapture }) => {
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot();
-    setCapturedImage(imageSrc);
-    onCapture(imageSrc);
+    if (imageSrc) {
+      setCapturedImage(imageSrc);
+      onCapture(imageSrc);
+    }
   }, [webcamRef, setCapturedImage, onCapture]);
 
   return (

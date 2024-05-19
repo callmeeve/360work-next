@@ -31,8 +31,8 @@ const upload = multer({
     fileSize: 1024 * 1024 * 5, // limit file size to 5MB
   },
   fileFilter: function (req, file, cb) {
-     // accept all file types
-     if (file.size > 1024 * 1024 * 5) {
+    // accept all file types
+    if (file.size > 1024 * 1024 * 5) {
       return cb(new Error("File size should be less than 5MB"), false);
     }
     cb(null, true);
@@ -88,9 +88,23 @@ export default async function handler(req, res) {
     }
 
     const checkInTime = new Date();
-    const workStartTime = employee.workStart
-      ? new Date(employee.workStart)
-      : null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const attendance = await prisma.attendance.findFirst({
+      where: {
+        employeeId: employee.id,
+        createdAt: {
+          gte: today,
+          lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+        },
+      },
+    });
+
+    const workStartTime =
+      attendance && attendance.workStart
+        ? new Date(attendance.workStart)
+        : null;
     let status;
 
     if (workStartTime && checkInTime > workStartTime) {
@@ -100,7 +114,7 @@ export default async function handler(req, res) {
     }
 
     try {
-      const attendance = await prisma.attendance.create({
+      const attendanceRecord = await prisma.attendance.create({
         data: {
           employeeId: employee.id,
           checkIn: checkInTime,
@@ -108,7 +122,7 @@ export default async function handler(req, res) {
           statusIn: status,
         },
       });
-      return res.status(200).json(attendance);
+      return res.status(200).json(attendanceRecord);
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Error creating attendance" });
