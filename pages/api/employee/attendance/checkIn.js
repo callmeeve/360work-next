@@ -90,21 +90,30 @@ export default async function handler(req, res) {
     const checkInTime = new Date();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
-    const attendance = await prisma.attendance.findFirst({
-      where: {
-        employeeId: employee.id,
-        createdAt: {
-          gte: today,
-          lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
-        },
-      },
-    });
 
-    const workStartTime =
-      attendance && attendance.workStart
-        ? new Date(attendance.workStart)
-        : null;
+    let attendance;
+    try {
+      attendance = await prisma.attendance.findFirst({
+        where: {
+          employeeId: employee.id,
+          createdAt: {
+            gte: today,
+            lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+          },
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Error fetching attendance" });
+    }
+
+    if (attendance) {
+      return res
+        .status(404)
+        .json({ message: "Attendance record already exists for today" });
+    }
+
+    const workStartTime = employee.workStart ? new Date(employee.workStart) : null;
     let status;
 
     if (workStartTime && checkInTime > workStartTime) {
@@ -129,6 +138,7 @@ export default async function handler(req, res) {
     }
   });
 }
+
 
 // Schedule task to run at 23:59 every day to mark absent employees
 cron.schedule("59 23 * * *", async () => {

@@ -64,7 +64,9 @@ export default async function handle(req, res) {
   };
 
   if (!isValidTime(workStart) || !isValidTime(workEnd)) {
-    return res.status(400).json({ message: "Invalid time format for workStart or workEnd" });
+    return res
+      .status(400)
+      .json({ message: "Invalid time format for workStart or workEnd" });
   }
 
   const existingUser = await prisma.user.findUnique({
@@ -104,9 +106,16 @@ export default async function handle(req, res) {
     });
   }
 
+  // Construct full date-time strings from current date and provided time values
+  const currentDate = new Date().toISOString().split("T")[0]; // Get current date in ISO format
+  const start = new Date(`${currentDate}T${workStart}:00`).toISOString();
+  const end = new Date(`${currentDate}T${workEnd}:00`).toISOString();
+
   const newEmployee = await prisma.employee.create({
     data: {
       job_status: job_status,
+      workStart: start,
+      workEnd: end,
       user: {
         connect: {
           id: newUser.id,
@@ -130,29 +139,5 @@ export default async function handle(req, res) {
     },
   });
 
-  // Construct full date-time strings from current date and provided time values
-  const currentDate = new Date().toISOString().split('T')[0]; // Get current date in ISO format
-  const start = new Date(`${currentDate}T${workStart}:00`).toISOString();
-  const end = new Date(`${currentDate}T${workEnd}:00`).toISOString();
-
-  try {
-    const attendance = await prisma.attendance.create({
-      data: {
-        employeeId: newEmployee.id,
-        workStart: start,
-        workEnd: end,
-      },
-    });
-
-    return res.status(200).json({
-      message: "Employee and attendance created successfully",
-      newEmployee,
-      attendance,
-    });
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ message: "Error creating attendance record" });
-  }
+  return res.status(200).json({ message: "Employee added successfully" });
 }

@@ -30,7 +30,6 @@ const upload = multer({
     fileSize: 1024 * 1024 * 5, // limit file size to 5MB
   },
   fileFilter: function (req, file, cb) {
-    // accept all file types
     if (file.size > 1024 * 1024 * 5) {
       return cb(new Error("File size should be less than 5MB"), false);
     }
@@ -89,7 +88,6 @@ export default async function handler(req, res) {
     const checkOutTime = new Date();
 
     try {
-      // Find the existing attendance record for today
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
@@ -104,17 +102,16 @@ export default async function handler(req, res) {
       });
 
       if (!attendance) {
-        return res
-          .status(404)
-          .json({ message: "Attendance record not found for today" });
+        return res.status(404).json({ message: "Attendance record not found for today" });
       }
 
-      const workEndTime =
-        attendance && attendance.workEnd ? new Date(attendance.workEnd) : null;
+      const workEndTime = employee.workEnd ? new Date(employee.workEnd) : null;
       let status;
 
       if (workEndTime && checkOutTime > workEndTime) {
         status = "OVER_TIME";
+      } else if (workEndTime && checkOutTime < workEndTime) {
+        status = "LEAVE_EARLY";
       } else {
         status = "LEAVE";
       }

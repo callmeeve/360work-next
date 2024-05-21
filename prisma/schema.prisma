@@ -8,23 +8,20 @@ datasource db {
 }
 
 model attendance {
-  id         Int               @id @default(autoincrement())
-  statusIn     attendance_status?
-  statusOut    attendance_status?
-  employeeId Int
-  createdAt  DateTime          @default(now())
-  updatedAt  DateTime          @updatedAt
-  checkIn    DateTime?
-  checkInImage String?
-  checkOut   DateTime?
+  id            Int                @id @default(autoincrement())
+  statusIn      attendance_status?
+  statusOut     attendance_status?
+  employeeId    Int
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  checkIn       DateTime?
+  checkInImage  String?
+  checkOut      DateTime?
   checkOutImage String?
-  workStart  DateTime?
-  workEnd    DateTime?
-  employee   employee          @relation(fields: [employeeId], references: [id], map: "Attendance_employeeId_fkey")
+  employee      employee           @relation(fields: [employeeId], references: [id], map: "Attendance_employeeId_fkey")
 
   @@index([employeeId], map: "Attendance_employeeId_fkey")
 }
-
 
 model company {
   id         Int          @id @default(autoincrement())
@@ -58,6 +55,8 @@ model employee {
   gender       employee_gender?
   job_status   employee_job_status
   phone        String?
+  workStart    DateTime?
+  workEnd      DateTime?
   userId       Int                 @unique(map: "Employee_userId_key")
   companyId    Int
   departmentId Int
@@ -104,7 +103,6 @@ model notification {
 
   @@index([userId], map: "Notification_userId_fkey")
 }
-
 
 model task {
   id          Int          @id @default(autoincrement())

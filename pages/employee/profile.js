@@ -123,14 +123,10 @@ const EmployeeProfilePage = () => {
                 </div>
                 <div>
                   <p className="font-medium text-primary">Work Hours</p>
-                  {attendance.map((item, index) => (
-                    <div key={item.id || index}>
-                      <p className="text-gray-500 text-sm">
-                        {format(new Date(item.workStart), "HH:mm")} -{" "}
-                        {format(new Date(item.workEnd), "HH:mm")}
-                      </p>
-                    </div>
-                  ))}
+                  <p className="text-gray-500 text-sm">
+                    {format(new Date(employee.workStart), "HH:mm")} -{" "}
+                    {format(new Date(employee.workEnd), "HH:mm")}
+                  </p>
                 </div>
                 <div>
                   <p className="font-medium text-primary">Birth Date</p>
