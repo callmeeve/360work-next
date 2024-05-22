@@ -173,6 +173,7 @@ const EmployeeAttendancePage = () => {
                               height="100%"
                             />
                             <button
+                              type="button"
                               className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
                               onClick={() =>
                                 handleCapture(webcamRefCheckIn, setCheckInImage)
@@ -184,6 +185,7 @@ const EmployeeAttendancePage = () => {
                           <div className="mt-4">
                             <div className="flex justify-end">
                               <button
+                                type="submit"
                                 className="px-4 py-2 bg-blue-500 text-white rounded"
                                 onClick={() =>
                                   handleSubmit(
@@ -272,6 +274,7 @@ const EmployeeAttendancePage = () => {
                               height="100%"
                             />
                             <button
+                              type="button"
                               className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
                               onClick={() =>
                                 handleCapture(webcamRefCheckOut, setCheckOutImage)
@@ -283,6 +286,7 @@ const EmployeeAttendancePage = () => {
                           <div className="mt-4">
                             <div className="flex justify-end">
                               <button
+                                type="submit"
                                 className="px-4 py-2 bg-blue-500 text-white rounded"
                                 onClick={() =>
                                   handleSubmit(
@@ -305,70 +309,6 @@ const EmployeeAttendancePage = () => {
                 </Dialog>
               </Transition>
             </div>
-            // <div className="flex flex-col items-center">
-            //   <h2 className="text-xl font-semibold">Check In</h2>
-            //   <Webcam
-            //     ref={webcamRefCheckIn}
-            //     audio={false}
-            //     screenshotFormat="image/jpeg"
-            //     width="100%"
-            //     height="100%"
-            //     onUserMedia={() => alert("Webcam is ready")}
-            //   />
-            //   <button
-            //     className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-            //     onClick={() => handleCapture(webcamRefCheckIn, setCheckInImage)}
-            //   >
-            //     Capture
-            //   </button>
-            //   <button
-            //     className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-            //     onClick={() =>
-            //       handleSubmit(
-            //         checkInImage,
-            //         setCheckInImage,
-            //         "/api/employee/attendance/checkin",
-            //         setCheckInCompleted,
-            //         "Check In"
-            //       )
-            //     }
-            //   >
-            //     Check In
-            //   </button>
-            // </div>
-            // <div className="flex flex-col items-center">
-            //   <h2 className="text-xl font-semibold">Check Out</h2>
-            //   <Webcam
-            //     ref={webcamRefCheckOut}
-            //     audio={false}
-            //     screenshotFormat="image/jpeg"
-            //     width="100%"
-            //     height="100%"
-            //     onUserMedia={() => alert("Webcam is ready")}
-            //   />
-            //   <button
-            //     className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-            //     onClick={() =>
-            //       handleCapture(webcamRefCheckOut, setCheckOutImage)
-            //     }
-            //   >
-            //     Capture
-            //   </button>
-            //   <button
-            //     className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-            //     onClick={() =>
-            //       handleSubmit(
-            //         checkOutImage,
-            //         setCheckOutImage,
-            //         "/api/employee/attendance/checkout",
-            //         null,
-            //         "Check Out"
-            //       )
-            //     }
-            //   >
-            //     Check Out
-            //   </button>
-            // </div>
           )}
         </div>
       </div>
