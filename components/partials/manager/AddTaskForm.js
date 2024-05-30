@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Swal from "sweetalert2";
 import api from "@/components/data/utils/api";
 
 export default function AddTaskForm({ isOpen, onClose }) {
@@ -54,15 +53,7 @@ export default function AddTaskForm({ isOpen, onClose }) {
         setEmployeeId("");
         setFile(null);
 
-        Swal.fire({
-          icon: "success",
-          title: "Task added successfully",
-        });
-
-        onClose();
-
-        // Refresh the list of tasks
-        // getTasks();
+        window.location.reload();
       }
     } catch (error) {
       setError(error.response.data.message);

@@ -142,25 +142,16 @@ export default function Header({ showNav, setShowNav, users, handleLogout }) {
                 <Menu.Item>
                   <Link
                     href={`/${users.role.toLowerCase()}/profile`}
-                    className="flex hover:bg-indigo-100 text-gray-800 rounded p-2 text-sm group transition-colors items-center"
+                    className="flex hover:bg-indigo-100 hover:text-indigo-500 text-gray-800 rounded p-2 text-sm group transition-colors items-center"
                   >
                     <HiUser className="h-4 w-4 mr-2" />
                     Profile
                   </Link>
                 </Menu.Item>
                 <Menu.Item>
-                  <Link
-                    href="#"
-                    className="flex hover:bg-indigo-100 text-gray-800 rounded p-2 text-sm group transition-colors items-center"
-                  >
-                    <HiCreditCard className="h-4 w-4 mr-2" />
-                    Billing
-                  </Link>
-                </Menu.Item>
-                <Menu.Item>
                   <button
                     onClick={handleLogout}
-                    className="w-full flex hover:bg-indigo-100 text-gray-800 rounded p-2 text-sm group transition-colors items-center"
+                    className="w-full flex hover:bg-indigo-100 hover:text-indigo-500 text-gray-800 rounded p-2 text-sm group transition-colors items-center"
                   >
                     <IoLogOutOutline className="h-4 w-4 mr-2" />
                     Logout

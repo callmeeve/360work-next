@@ -127,7 +127,7 @@ const EmployeeDashboard = () => {
                         </td>
                       </tr>
                     )}
-                    {tasks.map((task) => (
+                    {displayedTasks.map((task) => (
                       <tr key={task.id}>
                         <td className="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
                           <div className="flex items-center gap-x-2">

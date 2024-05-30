@@ -173,26 +173,19 @@ const ManagerDashboard = () => {
                       <th scope="col" className="px-6 py-3">
                         Company
                       </th>
-                      <th scope="col" className="px-6 py-3">
-                        Actions
-                      </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {employees.map((employee) => (
+                    {employees.slice(0, 3).map((employee) => (
                       <tr key={employee.id}>
                         <td className="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
-                          {employee.user.email}
+                          {employee.user.name} ?? {employee.user.email}
                         </td>
                         <td className="px-6 py-4">{employee.job_status}</td>
                         <td className="px-6 py-4">
                           {employee.department.name}
                         </td>
                         <td className="px-6 py-4">{employee.company.name}</td>
-                        <td className="px-6 py-4">
-                          <button className="text-primary mr-2">Edit</button>
-                          <button className="text-danger">Delete</button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>

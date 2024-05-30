@@ -4,6 +4,7 @@ import api from "@/components/data/utils/api";
 import { IoDocumentTextOutline, IoImageOutline } from "react-icons/io5";
 import { HiOutlineTrash, HiPencilSquare } from "react-icons/hi2";
 import AddTaskForm from "@/components/partials/manager/AddTaskForm";
+import Swal from "sweetalert2";
 
 const ManagerTaskPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -25,6 +26,28 @@ const ManagerTaskPage = () => {
       setError(error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const deleteTask = async (id) => {
+    try {
+      const res = await api.delete(`/api/manager/task/delete?id=${id}`);
+      if (res.status === 200) {
+        console.log("Task deleted successfully");
+        Swal.fire({
+          icon: "success",
+          title: "Task deleted successfully",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+
+        getTasks();
+      } else {
+        throw new Error("Failed to delete task");
+      }
+    } catch (error) {
+      console.error(error);
+      setError(error);
     }
   };
 
@@ -181,6 +204,7 @@ const ManagerTaskPage = () => {
 
                             <button
                               type="button"
+                              onClick={() => deleteTask(task.id)} 
                               className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-500 hover:text-red-600 disabled:opacity-50 disabled:pointer-events-none focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                             >
                               <HiOutlineTrash className="w-5 h-5" />

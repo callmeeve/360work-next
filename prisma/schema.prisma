@@ -117,9 +117,22 @@ model task {
   employee    employee     @relation(fields: [employeeId], references: [id], map: "Task_employeeId_fkey")
   manager     manager      @relation(fields: [managerId], references: [id], map: "Task_managerId_fkey")
   taskreport  taskreport[]
+  subtask     subtask[]    
 
   @@index([employeeId], map: "Task_employeeId_fkey")
   @@index([managerId], map: "Task_managerId_fkey")
+}
+
+model subtask {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  taskId      Int
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  task        task       @relation(fields: [taskId], references: [id], map: "SubTask_taskId_fkey")
+
+  @@index([taskId], map: "SubTask_taskId_fkey")
 }
 
 model taskreport {

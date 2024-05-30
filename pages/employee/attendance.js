@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, Fragment } from "react";
-import Webcam from "react-webcam";
 import api from "@/components/data/utils/api";
 import RoleBasedLayout from "@/components/data/helper/RoleBasedLayout";
 import { HiOutlineCamera } from "react-icons/hi2";
 import { Dialog, Transition } from "@headlessui/react";
+import { CheckInComp } from "@/components/partials/employee/CheckInComp";
+import { CheckOutComp } from "@/components/partials/employee/CheckOutComp";
 
 const EmployeeAttendancePage = () => {
   const [employee, setEmployee] = useState();
@@ -82,7 +83,6 @@ const EmployeeAttendancePage = () => {
         setCompleted(true);
       }
       alert(`${title} successful`);
-      getAttendance();
     } catch (error) {
       console.error(error);
       setError("Error submitting attendance");
@@ -99,6 +99,12 @@ const EmployeeAttendancePage = () => {
     workEnd = new Date(employee.workEnd);
   }
 
+  loading && <p>Loading...</p>;
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
   return (
     <div className="flex flex-col">
       <div className="my-8">
@@ -106,19 +112,19 @@ const EmployeeAttendancePage = () => {
           <h1 className="text-2xl font-semibold">Employee Attendance</h1>
           <p className="text-gray-500">Upload your attendance here</p>
         </div>
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-1 gap-4">
           {!checkInCompleted ? (
             <div
               className="p-4 bg-white border shadow-sm rounded cursor-pointer"
               onClick={openCheckIn}
             >
-              <div className="flex items-center">
+              <div className="flex flex-col gap-y-4 lg:flex-row items-center justify-center">
                 <div className="size-16 flex items-center justify-center bg-blue-100 rounded-md">
                   <h1 className="text-xl font-medium text-blue-500">
                     {today.toLocaleString(undefined, { weekday: "short" })}
                   </h1>
                 </div>
-                <div className="flex flex-col ml-4">
+                <div className="flex flex-col text-center lg:text-start ml-0 lg:ml-4">
                   <h2 className="text-lg font-semibold">
                     {today.toLocaleString("id-ID", { dateStyle: "long" })}
                   </h2>
@@ -128,12 +134,17 @@ const EmployeeAttendancePage = () => {
                     })}
                   </p>
                 </div>
-                <div className="size-16 flex items-center justify-center bg-blue-100 rounded-md ml-auto">
+                <div className="size-16 flex items-center justify-center bg-blue-100 rounded-md ml-0 lg:ml-auto">
                   <HiOutlineCamera className="text-2xl text-blue-500" />
                 </div>
               </div>
               <Transition appear show={checkInOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={closeModal}>
+                <Dialog
+                  as="div"
+                  open={checkInOpen}
+                  className="relative z-10"
+                  onClose={closeModal}
+                >
                   <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -164,43 +175,21 @@ const EmployeeAttendancePage = () => {
                           >
                             Check In
                           </Dialog.Title>
-                          <div className="mt-3">
-                            <Webcam
-                              ref={webcamRefCheckIn}
-                              audio={false}
-                              screenshotFormat="image/jpeg"
-                              width="100%"
-                              height="100%"
-                            />
-                            <button
-                              type="button"
-                              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                              onClick={() =>
-                                handleCapture(webcamRefCheckIn, setCheckInImage)
-                              }
-                            >
-                              Capture
-                            </button>
-                          </div>
-                          <div className="mt-4">
-                            <div className="flex justify-end">
-                              <button
-                                type="submit"
-                                className="px-4 py-2 bg-blue-500 text-white rounded"
-                                onClick={() =>
-                                  handleSubmit(
-                                    checkInImage,
-                                    setCheckInImage,
-                                    "/api/employee/attendance/checkin",
-                                    setCheckInCompleted(true),
-                                    "Check In"
-                                  )
-                                }
-                              >
-                                Check In
-                              </button>
-                            </div>
-                          </div>
+                          <CheckInComp
+                            webcamRefCheckIn={webcamRefCheckIn}
+                            capture={() =>
+                              handleCapture(webcamRefCheckIn, setCheckInImage)
+                            }
+                            checkIn={() =>
+                              handleSubmit(
+                                checkInImage,
+                                setCheckInImage,
+                                "/api/employee/attendance/checkin",
+                                setCheckInCompleted(true),
+                                "Check In"
+                              )
+                            }
+                          />
                         </Dialog.Panel>
                       </Transition.Child>
                     </div>
@@ -209,7 +198,10 @@ const EmployeeAttendancePage = () => {
               </Transition>
             </div>
           ) : (
-            <div className="p-4 bg-white border shadow-sm rounded">
+            <div
+              className="p-4 bg-white border shadow-sm rounded cursor-pointer"
+              onClick={openCheckOut}
+            >
               <div className="flex items-center">
                 <div className="size-16 flex items-center justify-center bg-blue-100 rounded-md">
                   <h1 className="text-xl font-medium text-blue-500">
@@ -227,14 +219,16 @@ const EmployeeAttendancePage = () => {
                   </p>
                 </div>
                 <div className="size-16 flex items-center justify-center bg-blue-100 rounded-md ml-auto">
-                  <HiOutlineCamera
-                    onClick={openCheckOut}
-                    className="text-2xl text-blue-500 cursor-pointer"
-                  />
+                  <HiOutlineCamera className="text-2xl text-blue-500" />
                 </div>
               </div>
               <Transition appear show={checkOutOpen} as={Fragment}>
-                <Dialog as="div" className="relative z-10" onClose={closeModal}>
+                <Dialog
+                  as="div"
+                  open={checkOutOpen}
+                  className="relative z-10"
+                  onClose={closeModal}
+                >
                   <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -265,43 +259,21 @@ const EmployeeAttendancePage = () => {
                           >
                             Check Out
                           </Dialog.Title>
-                          <div className="mt-3">
-                            <Webcam
-                              ref={webcamRefCheckOut}
-                              audio={false}
-                              screenshotFormat="image/jpeg"
-                              width="100%"
-                              height="100%"
-                            />
-                            <button
-                              type="button"
-                              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                              onClick={() =>
-                                handleCapture(webcamRefCheckOut, setCheckOutImage)
-                              }
-                            >
-                              Capture
-                            </button>
-                          </div>
-                          <div className="mt-4">
-                            <div className="flex justify-end">
-                              <button
-                                type="submit"
-                                className="px-4 py-2 bg-blue-500 text-white rounded"
-                                onClick={() =>
-                                  handleSubmit(
-                                    checkOutImage,
-                                    setCheckOutImage,
-                                    "/api/employee/attendance/checkout",
-                                    setCheckInCompleted(true),
-                                    "Check Out"
-                                  )
-                                }
-                              >
-                                Check Out
-                              </button>
-                            </div>
-                          </div>
+                          <CheckOutComp
+                            webcamRefCheckOut={webcamRefCheckOut}
+                            capture={() =>
+                              handleCapture(webcamRefCheckOut, setCheckOutImage)
+                            }
+                            checkOut={() =>
+                              handleSubmit(
+                                checkOutImage,
+                                setCheckOutImage,
+                                "/api/employee/attendance/checkout",
+                                setCheckInCompleted(true),
+                                "Check Out"
+                              )
+                            }
+                          />
                         </Dialog.Panel>
                       </Transition.Child>
                     </div>

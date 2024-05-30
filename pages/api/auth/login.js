@@ -50,7 +50,7 @@ export default async function handler(req, res) {
         { id: user.id, email: user.email, role: user.role },
         process.env.JWT_SECRET,
         {
-          expiresIn: 86400, // 24 hours
+          expiresIn: "7d" // 7 days
         }
       );
     } catch (error) {
