@@ -3,6 +3,7 @@ import api from "@/components/data/utils/api";
 import RoleBasedLayout from "@/components/data/helper/RoleBasedLayout";
 import { HiOutlineTrash, HiPencilSquare } from "react-icons/hi2";
 import { IoFilter } from "react-icons/io5";
+import Swal from "sweetalert2";
 
 const ManagerCompanyPage = () => {
   const [companies, setCompanies] = useState([]);
@@ -40,9 +41,14 @@ const ManagerCompanyPage = () => {
       setAddress("");
       setEmail("");
 
-      alert("Company created successfully");
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Company added successfully",
+      });
 
-      window.location.reload();
+      getCompanies();
+
     } catch (error) {
       setError(error);
     } finally {

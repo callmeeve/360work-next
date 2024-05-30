@@ -24,7 +24,7 @@ const ManagerProfilePage = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex-grow">
+      <div className="flex-grow my-8">
         <div className="p-8 bg-white border rounded-lg shadow-sm">
           <h1 className="text-2xl font-semibold text-gray-800">
             Personal Information
@@ -54,26 +54,6 @@ const ManagerProfilePage = () => {
                 />
               </div>
               <div className="flex flex-col w-full mb-5">
-                <label htmlFor="phone" className="text-sm font-semibold mb-2">
-                  Phone
-                </label>
-                <input
-                  type="text"
-                  id="phone"
-                  className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div className="flex flex-col w-full mb-5">
-                <label htmlFor="address" className="text-sm font-semibold mb-2">
-                  Address
-                </label>
-                <input
-                  type="text"
-                  id="address"
-                  className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring focus:border-blue-300"
-                />
-              </div>
-              <div className="flex flex-col w-full mb-5">
                 <label
                   htmlFor="password"
                   className="text-sm font-semibold mb-2"
@@ -83,6 +63,7 @@ const ManagerProfilePage = () => {
                 <input
                   type="password"
                   id="password"
+                  value={users.password}
                   className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring focus:border-blue-300"
                 />
               </div>

@@ -78,7 +78,7 @@ const ManagerDepartmentPage = () => {
                 >
                   Add Department
                 </button>
-                <AddDepartmentForm isOpen={isOpen} onClose={closeModal} />
+                <AddDepartmentForm isOpen={isOpen} onClose={closeModal} getDepartments={getDepartments} />
 
                 <button
                   type="button"

@@ -65,7 +65,7 @@ const ManagerDashboard = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="my-8">
+      <div className="flex-grow my-8">
         <div className="mb-5">
           <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
           <p className="text-gray-500">Welcome to the Manager Dashboard</p>
@@ -179,7 +179,7 @@ const ManagerDashboard = () => {
                     {employees.slice(0, 3).map((employee) => (
                       <tr key={employee.id}>
                         <td className="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
-                          {employee.user.name} ?? {employee.user.email}
+                          {employee.user.email}
                         </td>
                         <td className="px-6 py-4">{employee.job_status}</td>
                         <td className="px-6 py-4">

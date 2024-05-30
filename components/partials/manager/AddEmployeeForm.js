@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import api from "@/components/data/utils/api";
+import Swal from "sweetalert2";
 
-export default function AddEmployeeForm({ isOpen, onClose }) {
+export default function AddEmployeeForm({ isOpen, onClose, getEmployees }) {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -55,9 +56,16 @@ export default function AddEmployeeForm({ isOpen, onClose }) {
         setWorkEnd("");
         setDepartmentId("");
 
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Employee added successfully",
+        });
 
-        alert("Employee added successfully");
-        window.location.reload();
+        onClose();
+
+        getEmployees();
+
       }
     } catch (error) {
       setError(error.response.data.message);

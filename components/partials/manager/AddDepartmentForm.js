@@ -1,7 +1,8 @@
 import { useState } from "react";
 import api from "@/components/data/utils/api";
+import Swal from "sweetalert2";
 
-export default function AddDepartmentForm({ isOpen, onClose }) {
+export default function AddDepartmentForm({ isOpen, onClose, getDepartments }) {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -12,9 +13,17 @@ export default function AddDepartmentForm({ isOpen, onClose }) {
     try {
       await api.post("/api/manager/department/create", { name });
       setName("");
-      alert("Department created successfully");
+      
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Department added successfully",
+      });
 
-      window.location.reload();
+      onClose();
+
+      getDepartments();
+
     } catch (error) {
       setError(error.message);
     } finally {
