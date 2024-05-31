@@ -23,33 +23,40 @@ function RoleBasedLayout(WrappedComponent) {
     }, []);
 
     useEffect(() => {
-      if (!loading && user) {
-        if (!["EMPLOYEE", "MANAGER", "ADMIN"].includes(user.role)) {
-          localStorage.removeItem("user");
-          router.push("/");
+      if (!loading) {
+        if (user) {
+          if (!["EMPLOYEE", "MANAGER", "ADMIN"].includes(user.role)) {
+            localStorage.removeItem("user");
+            router.push("/");
+          } else {
+            const layoutMap = {
+              EMPLOYEE: EmployeeLayout,
+              MANAGER: ManagerLayout,
+              ADMIN: AdminLayout,
+            };
+            setLayout(() => layoutMap[user.role]);
+          }
         } else {
-          const layoutMap = {
-            EMPLOYEE: EmployeeLayout,
-            MANAGER: ManagerLayout,
-            ADMIN: AdminLayout,
-          };
-          setLayout(() => layoutMap[user.role]);
+          router.push("/"); // Redirect if no user is found
         }
       }
-    }, [loading, user]);
+    }, [loading, user, router]);
 
     if (loading || !Layout) {
       return (
         <div className="flex items-center justify-center h-screen">
           <svg
-            className="animate-spin h-5 w-5 mr-3 ..."
+            className="animate-spin h-5 w-5 mr-3"
             viewBox="0 0 24 24"
-          ></svg>
+          >
+            <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+            <path d="M4 12a8 8 0 018-8v8H4z" fill="currentColor" />
+          </svg>
         </div>
       );
     }
 
-    return <Layout>{<WrappedComponent {...props} />}</Layout>;
+    return <Layout><WrappedComponent {...props} /></Layout>;
   };
 }
 

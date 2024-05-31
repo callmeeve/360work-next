@@ -1,3 +1,4 @@
+import { io } from "@/components/data/helper/server";
 import { prisma } from "@/config/db";
 import jwt from "jsonwebtoken";
 
@@ -45,5 +46,7 @@ export default async function handler(req, res) {
     return res.status(404).json({ message: "User not found" });
   }
 
-  return res.status(200).json(user.Notification);
+  io.to(decoded.id).emit("notification", user.notification);
+
+  return res.status(200).json(user.notification);
 }

@@ -10,6 +10,7 @@ import {
 } from "react-icons/hi2";
 import api from "@/components/data/utils/api";
 import { IoFilterOutline } from "react-icons/io5";
+import TaskChart from "@/components/partials/manager/TaskChart";
 
 const ManagerDashboard = () => {
   const [employees, setEmployees] = useState([]);
@@ -193,6 +194,9 @@ const ManagerDashboard = () => {
               </div>
             </div>
           </div>
+        </div>
+        <div className="mt-12">
+          <TaskChart />
         </div>
       </div>
     </div>
